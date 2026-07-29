@@ -1,0 +1,1 @@
+﻿export function SectionHeading({eyebrow,title,description,inverse=false}:{eyebrow:string;title:string;description:string;inverse?:boolean}){return <div className={`section-heading ${inverse?"inverse":""}`}><p className="eyebrow">{eyebrow}</p><h2>{title}</h2><p>{description}</p></div>}

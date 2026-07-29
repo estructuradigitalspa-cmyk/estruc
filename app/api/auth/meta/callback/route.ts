@@ -1,0 +1,1 @@
+﻿import { NextResponse } from "next/server"; export function GET(){return NextResponse.json({status:"not_configured",message:"El callback de autenticación de Meta aún no está configurado."},{status:501})}

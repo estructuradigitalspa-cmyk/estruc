@@ -1,0 +1,1 @@
+﻿import Link from "next/link"; export function Wordmark(){return <Link className="wordmark" href="/" aria-label="Estructura Digital, inicio"><span className="wordmark-mark" aria-hidden="true"><i/><i/><i/><i/></span><span>Estructura Digital</span></Link>}
