@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/page-hero";
 import { siteConfig } from "@/lib/site-config";
 
-export const metadata: Metadata = { title: "Eliminación de Datos", description: "Instrucciones públicas para solicitar la eliminación de datos personales y de integraciones.", alternates: { canonical: "/data-deletion" } };
+export const metadata: Metadata = { title: "Eliminación de Datos", description: "Instrucciones públicas para solicitar la eliminación de datos personales y de integraciones.", alternates: { canonical: "/eliminacion-de-datos" } };
 
 export default async function DataDeletionPage({searchParams}:{searchParams:Promise<{code?:string}>}) {
   const {code} = await searchParams;

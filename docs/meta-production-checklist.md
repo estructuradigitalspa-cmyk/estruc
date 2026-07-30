@@ -19,6 +19,7 @@ Leyenda: ✅ Codex puede resolverlo en el repositorio. ⚠️ Requiere autorizac
 | CRÍTICO | Login / elegibilidad | App no elegible para envío | Meta exige icono, Privacy, Data Deletion y categoría | Completar campos sin publicar | ⚠️ Autorización | Sí | 20–40 min |
 | CRÍTICO | Login / Privacy | URL vacía | Sin URL en Meta | Usar `https://estructuradigital.cl/privacidad` | ⚠️ Autorización | Sí | 3 min |
 | CRÍTICO | Login / Terms | Apunta a Facebook | `https://www.facebook.com/` | Usar `https://estructuradigital.cl/terminos` | ⚠️ Autorización | Sí | 3 min |
+| CRÍTICO | Login / Data Deletion | URL pública no normalizada | Rutas duplicadas | Usar https://estructuradigital.cl/eliminacion-de-datos | ⚠️ Autorización | Sí | 3 min |
 | CRÍTICO | Login / Data Deletion | Apunta a Facebook | Instrucciones incorrectas | Usar endpoint/instrucciones propios y probar firma Login | ⚠️ Autorización | Sí | 15–30 min |
 | CRÍTICO | Login / Domains | App Domains vacíos | Sin dominio raíz ni www | Agregar raíz y www | ⚠️ Autorización | Sí | 5 min |
 | CRÍTICO | Login / Site URL | Website/Site URL no confirmado | No visible | Configurar sitio HTTPS canónico | ⚠️ Autorización | Sí | 5 min |

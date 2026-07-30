@@ -5,7 +5,7 @@ import { siteConfig } from "@/lib/site-config";
 export const metadata: Metadata = {
   title: "Política de Privacidad",
   description: "Política de privacidad, tratamiento y eliminación de datos de Estructura Digital SPA.",
-  alternates: { canonical: "/privacy" },
+  alternates: { canonical: "/privacidad" },
 };
 
 export default function PrivacyPage() {

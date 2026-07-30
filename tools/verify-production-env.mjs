@@ -1,5 +1,8 @@
 const expected = {
   NEXT_PUBLIC_SITE_URL: "https://estructuradigital.cl",
+  META_PRIVACY_POLICY_URL: "https://estructuradigital.cl/privacidad",
+  META_TERMS_URL: "https://estructuradigital.cl/terminos",
+  META_DATA_DELETION_URL: "https://estructuradigital.cl/eliminacion-de-datos",
   NEXT_PUBLIC_SUPABASE_URL: "https://ocmcyhimhndlxlicojrs.supabase.co",
   META_LOGIN_APP_ID: "1048232064232330",
   META_BUSINESS_APP_ID: "2487731658317049",
