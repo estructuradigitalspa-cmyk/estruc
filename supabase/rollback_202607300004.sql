@@ -1,3 +1,5 @@
+drop function if exists public.accept_invitation(uuid);
+drop function if exists public.claim_webhook_events(integer);
 create policy deletion_member on public.data_deletion_requests for select using(organization_id is not null and public.is_org_member(organization_id));
 drop policy if exists audit_privileged_read on public.audit_logs;
 create policy audit_member on public.audit_logs for select using(public.is_org_member(organization_id));

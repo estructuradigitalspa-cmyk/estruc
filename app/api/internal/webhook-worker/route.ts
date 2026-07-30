@@ -1,0 +1,5 @@
+import {NextResponse} from "next/server";
+import {processPendingEvents} from "@/lib/whatsapp-webhook";
+import {operationalLog} from "@/lib/structured-log";
+export const dynamic="force-dynamic";
+export async function GET(request:Request){const secret=process.env.CRON_SECRET;if(!secret||request.headers.get("authorization")!==`Bearer ${secret}`)return NextResponse.json({error:"Unauthorized"},{status:401});try{const result=await processPendingEvents(Number(process.env.WEBHOOK_WORKER_BATCH_SIZE||50));operationalLog("info",{stage:"webhook_drain",result:"completed",error_code:result.invalid?"INVALID_JOBS_FOUND":undefined});return NextResponse.json(result,{headers:{"cache-control":"no-store"}})}catch{operationalLog("error",{stage:"webhook_drain",result:"failed",error_code:"WEBHOOK_DRAIN_FAILED"});return NextResponse.json({error:"Worker unavailable"},{status:503})}}

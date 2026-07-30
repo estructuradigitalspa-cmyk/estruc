@@ -1,0 +1,5 @@
+import {redirect} from "next/navigation";
+import {createClient} from "@/lib/supabase/server";
+import {acceptInvitation} from "./actions";
+export const dynamic="force-dynamic";
+export default async function Page({searchParams}:{searchParams:Promise<{id?:string;error?:string}>}){const params=await searchParams,id=params.id||"";const supabase=await createClient();const{data:{user}}=await supabase.auth.getUser();if(!user)redirect(`/iniciar-sesion?next=${encodeURIComponent(`/aceptar-invitacion?id=${id}`)}`);return <main className="auth-page"><section className="auth-card"><h1>Aceptar invitación</h1>{params.error?<p className="form-status error">La invitación no existe, venció o corresponde a otro correo.</p>:<form action={acceptInvitation}><input type="hidden" name="invitation" value={id}/><button className="button button-primary" type="submit" disabled={!id}>Aceptar y continuar</button></form>}</section></main>}

@@ -1,0 +1,5 @@
+"use server";
+import {cookies} from "next/headers";
+import {redirect} from "next/navigation";
+import {createClient} from "@/lib/supabase/server";
+export async function acceptInvitation(formData:FormData){const invitation=String(formData.get("invitation")||"");const supabase=await createClient();const{data:{user}}=await supabase.auth.getUser();if(!user)redirect(`/iniciar-sesion?next=${encodeURIComponent(`/aceptar-invitacion?id=${invitation}`)}`);const{data:organizationId,error}=await supabase.rpc("accept_invitation",{invitation});if(error||!organizationId)redirect("/aceptar-invitacion?error=invalid");const store=await cookies();store.set("active_organization_id",String(organizationId),{httpOnly:true,secure:process.env.NODE_ENV==="production",sameSite:"lax",path:"/",maxAge:60*60*24*365});redirect("/app/equipo")}

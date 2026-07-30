@@ -1,0 +1,2 @@
+import {describe,expect,it} from "vitest";import {safeInternalPath} from "@/lib/safe-internal-path";
+describe("redirects internos",()=>{it("acepta rutas internas con query",()=>expect(safeInternalPath("/aceptar-invitacion?id=1")).toBe("/aceptar-invitacion?id=1"));it.each(["//evil.example","/\\evil.example","https://evil.example","/ok\u0000bad",""])("rechaza destino %s",value=>expect(safeInternalPath(value)).toBe("/app"))});

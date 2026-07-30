@@ -1,0 +1,6 @@
+import {beforeEach,describe,expect,it,vi} from "vitest";
+const mock=vi.hoisted(()=>({fail:false}));
+vi.mock("@/lib/whatsapp-webhook",()=>({processPendingEvents:async()=>{if(mock.fail)throw new Error("fail");return{claimed:2,processed:2,retried:0,dead_letter:0,invalid:0}}}));
+vi.mock("@/lib/structured-log",()=>({operationalLog:vi.fn()}));
+import {GET} from "@/app/api/internal/webhook-worker/route";
+describe("scheduled webhook worker",()=>{beforeEach(()=>{process.env.CRON_SECRET="cron-test-secret";mock.fail=false});it("rechaza secreto ausente o incorrecto",async()=>{expect((await GET(new Request("https://example.com/api/internal/webhook-worker"))).status).toBe(401)});it("drena trabajos autorizados sin cache",async()=>{const r=await GET(new Request("https://example.com/api/internal/webhook-worker",{headers:{authorization:"Bearer cron-test-secret"}}));expect(r.status).toBe(200);expect(await r.json()).toEqual({claimed:2,processed:2,retried:0,dead_letter:0,invalid:0});expect(r.headers.get("cache-control")).toBe("no-store")});it("falla cerrado si la cola no está disponible",async()=>{mock.fail=true;const r=await GET(new Request("https://example.com/api/internal/webhook-worker",{headers:{authorization:"Bearer cron-test-secret"}}));expect(r.status).toBe(503)})});

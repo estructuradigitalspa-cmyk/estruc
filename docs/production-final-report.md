@@ -39,11 +39,13 @@ La organización activa se guarda en cookie HttpOnly/SameSite y se vuelve a vali
 | POST | `/api/meta/revalidate` | Supabase, Owner/Admin, CSRF, rate limit |
 | POST | `/api/whatsapp/send` | Supabase, Owner/Admin, CSRF, límites usuario+org |
 | GET | `/api/whatsapp/status` | Supabase y filtro de organización |
+| GET | `/api/internal/webhook-worker` | Bearer `CRON_SECRET`, claim atómico |
+| POST/PATCH/DELETE | `/api/organization/invitations`, `/api/organization/members` | Supabase, Owner/Admin, CSRF, rate limit |
 | GET | `/auth/callback` | PKCE Supabase y redirect interno validado |
 
 ## Variables de entorno utilizadas — solo nombres
 
-`NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `META_LOGIN_APP_ID`, `META_LOGIN_APP_SECRET`, `META_BUSINESS_APP_ID`, `META_BUSINESS_APP_SECRET`, `META_APP_ID`, `META_APP_SECRET`, `META_CONFIG_ID`, `META_GRAPH_API_VERSION`, `META_VERIFY_TOKEN`, `META_OAUTH_STATE_SECRET`, `META_TOKEN_ENCRYPTION_KEY`, `META_PHONE_NUMBER_ID`, `META_ACCESS_TOKEN`, `META_WABA_ID`, `ENABLE_GLOBAL_WHATSAPP_FALLBACK`, `RATE_LIMIT_CONTACT`, `RATE_LIMIT_WHATSAPP_USER`, `RATE_LIMIT_WHATSAPP_ORG`, `RATE_LIMIT_META_ATTEMPTS`, `RATE_LIMIT_DATA_DELETION`, `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, `CONTACT_TO_EMAIL`.
+`NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `META_LOGIN_APP_ID`, `META_LOGIN_APP_SECRET`, `META_BUSINESS_APP_ID`, `META_BUSINESS_APP_SECRET`, `META_APP_ID`, `META_APP_SECRET`, `META_CONFIG_ID`, `META_GRAPH_API_VERSION`, `META_VERIFY_TOKEN`, `META_OAUTH_STATE_SECRET`, `META_TOKEN_ENCRYPTION_KEY`, `META_PHONE_NUMBER_ID`, `META_ACCESS_TOKEN`, `META_WABA_ID`, `ENABLE_GLOBAL_WHATSAPP_FALLBACK`, `RATE_LIMIT_CONTACT`, `RATE_LIMIT_WHATSAPP_USER`, `RATE_LIMIT_WHATSAPP_ORG`, `RATE_LIMIT_META_ATTEMPTS`, `RATE_LIMIT_DATA_DELETION`, `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, `CONTACT_TO_EMAIL`, `CRON_SECRET`, `WEBHOOK_WORKER_BATCH_SIZE`.
 
 Los nombres heredados Meta existen solo para migración. El fallback global queda bloqueado en producción aun si faltan activos de una organización.
 
@@ -75,8 +77,8 @@ Firma `X-Hub-Signature-256`; falla cerrado con 503 si falta cualquier secreto re
 
 - Lint: aprobado.
 - Typecheck: aprobado.
-- Unit/integration simulada: 87 pruebas aprobadas en 16 archivos antes de la validación final.
-- Cobertura explícita de críticos: 91.51% statements, 80.00% branches, 98.97% lines; Embedded Session 88.13%, callback 100%, send 94.44%, webhook 87.27%, meta-assets 88.57% statements.
+- Unit/integration simulada: 108 pruebas aprobadas en 20 archivos en la validación final.
+- Cobertura explícita de críticos: 91.31% statements, 78.73% branches, 98.98% lines; Embedded Session 88.13%, callback 100%, send 94.73%, webhook 87.95%, meta-assets 88.57% statements.
 - Build Next 16.2.12: aprobado en validación final; 36 páginas generadas y `/seleccionar-organizacion` dinámica.
 - RLS real/local: bloqueado; Docker Desktop no está iniciado y la migración no se aplicó a producción.
 - E2E producción: pendiente de migración, deploy y selección humana en Meta.
@@ -98,7 +100,7 @@ Firma `X-Hub-Signature-256`; falla cerrado con 503 si falta cualquier secreto re
 
 - CSP requiere `'unsafe-inline'` para compatibilidad actual de Next; migrar a nonces sería endurecimiento posterior.
 - Invitaciones quedan modeladas y autorizadas por RPC, pero falta entrega/aceptación de email end-to-end antes de habilitar UI pública.
-- La cola usa `after()` y reintento persistido; falta un cron independiente que drene `next_retry_at` cuando no llegan nuevos eventos.
+- La cola usa `after()` y claim transaccional; un cron diario compatible con Hobby recupera eventos pendientes. Para reintentos de baja latencia se requiere Vercel Pro o un scheduler externo más frecuente.
 - Auditoría dev mantiene alertas de ESLint/minimatch y Babel; no forman parte del runtime productivo y sus fixes actuales son major/incompatibles.
 
 ### Baja

@@ -12,7 +12,7 @@ describe("Facebook OAuth de producción", () => {
     const login = fs.readFileSync("components/app-shell/facebook-login-button.tsx", "utf8");
     const signup = fs.readFileSync("components/app-shell/meta-embedded-signup.tsx", "utf8");
     expect(login).toContain('provider: "facebook"');
-    expect(login).toContain("/auth/callback?next=/app");
+    expect(login).toContain("/auth/callback?next=${encodeURIComponent(safeInternalPath(next))}");
     expect(signup).toContain("config_id");
     expect(signup).toContain('response_type:"code"');
     expect(signup).toContain("override_default_response_type:true");

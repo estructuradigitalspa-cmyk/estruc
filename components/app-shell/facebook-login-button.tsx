@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { Facebook } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import {safeInternalPath} from "@/lib/safe-internal-path";
 
-export function FacebookLoginButton() {
+export function FacebookLoginButton({next="/app"}:{next?:string}) {
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
   async function signIn() {
@@ -14,7 +15,7 @@ export function FacebookLoginButton() {
       const supabase = createClient();
       const { error: oauthError } = await supabase.auth.signInWithOAuth({
         provider: "facebook",
-        options: { redirectTo: `${window.location.origin}/auth/callback?next=/app` },
+        options: { redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(safeInternalPath(next))}` },
       });
       if (oauthError) throw oauthError;
     } catch {
