@@ -1,11 +1,12 @@
-import {randomUUID} from "node:crypto";
+import { randomUUID } from "node:crypto";
+import { metaBusinessAppSecret, metaLoginAppSecret } from "@/lib/meta-env";
 import {NextResponse} from "next/server";
 import {parseSignedRequest} from "@/lib/meta-security";
 import {createAdminClient} from "@/lib/supabase/admin";
 import {clientIp,consumeRateLimit} from "@/lib/rate-limit";
 import {operationalLog} from "@/lib/structured-log";
 type Payload={user_id?:string|number};
-function candidates(){return[{type:"login",secret:process.env.META_LOGIN_APP_SECRET},{type:"business",secret:process.env.META_BUSINESS_APP_SECRET||process.env.META_APP_SECRET}].filter((v):v is {type:string;secret:string}=>Boolean(v.secret))}
+function candidates(){return[{type:"login",secret:metaLoginAppSecret()},{type:"business",secret:metaBusinessAppSecret()}].filter((v):v is {type:string;secret:string}=>Boolean(v.secret))}
 async function signedValue(request:Request){const type=request.headers.get("content-type")||"";if(type.includes("application/json")){const j=await request.json().catch(()=>({})) as {signed_request?:unknown};return typeof j.signed_request==="string"?j.signed_request:""}const f=await request.formData().catch(()=>null);return String(f?.get("signed_request")||"")}
 export async function POST(request:Request){
  const rate=await consumeRateLimit({scope:"meta_data_deletion",subject:clientIp(request),limit:Number(process.env.RATE_LIMIT_DATA_DELETION||5),windowSeconds:3600});

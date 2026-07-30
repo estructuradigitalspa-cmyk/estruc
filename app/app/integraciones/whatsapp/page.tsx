@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { metaBusinessAppId, metaBusinessConfigId } from "@/lib/meta-env";
 import { MessageCircle } from "lucide-react";
 import { WhatsAppTest } from "@/components/app-shell/whatsapp-test";
 import { MetaEmbeddedSignup } from "@/components/app-shell/meta-embedded-signup";
@@ -10,7 +11,7 @@ export default async function Page() {
   const { membership } = await requireAppContext();
   return <main className="app-content">
     <div className="app-heading"><span className="app-icon"><MessageCircle/></span><div><p>Integraciones</p><h1>WhatsApp Business</h1><span>Conexión empresarial mediante el SDK oficial de Meta.</span></div></div>
-    <MetaEmbeddedSignup appId={process.env.META_BUSINESS_APP_ID || process.env.META_APP_ID} configId={process.env.META_CONFIG_ID} graphVersion={process.env.META_GRAPH_API_VERSION || "v26.0"}/>
+    <MetaEmbeddedSignup appId={metaBusinessAppId()} configId={metaBusinessConfigId()} graphVersion={process.env.META_GRAPH_API_VERSION || "v26.0"}/>
     <WhatsAppConnectionSummary/>
     <WhatsAppLifecycleControls allowed={["owner","admin"].includes(membership.role)}/>
     <WhatsAppTest/>

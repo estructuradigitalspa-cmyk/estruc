@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getApiContext } from "@/lib/supabase/api-context";
 import { createMetaOAuthState } from "@/lib/meta-oauth-state";
+import { metaBusinessAppId, metaBusinessConfigId } from "@/lib/meta-env";
 import { consumeRateLimit } from "@/lib/rate-limit";
 
 export async function GET() {
@@ -11,8 +12,8 @@ export async function GET() {
   }
   const rate = await consumeRateLimit({ scope: "meta_oauth_start", subject: context.user.id, limit: Number(process.env.RATE_LIMIT_META_ATTEMPTS || 10), windowSeconds: 900 });
   if (!rate.allowed) return NextResponse.redirect("https://estructuradigital.cl/app/integraciones/whatsapp?meta=rate_limited");
-  const appId = process.env.META_BUSINESS_APP_ID || process.env.META_APP_ID;
-  const configId = process.env.META_CONFIG_ID;
+  const appId = metaBusinessAppId();
+  const configId = metaBusinessConfigId();
   if (!appId || !configId) {
     return NextResponse.redirect("https://estructuradigital.cl/app/integraciones/whatsapp?meta=missing");
   }
