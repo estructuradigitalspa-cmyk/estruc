@@ -1,0 +1,10 @@
+export const serviceRequestStatuses=["NEW","QUALIFYING","AWAITING_INFORMATION","READY_TO_QUOTE","QUOTED","FOLLOW_UP","BOOKED","IN_PROGRESS","COMPLETED","CANCELLED","LOST","REQUIRES_HUMAN"] as const;
+export type ServiceRequestStatus=typeof serviceRequestStatuses[number];
+const allowed:Record<ServiceRequestStatus,readonly ServiceRequestStatus[]>={
+  NEW:["QUALIFYING","CANCELLED","REQUIRES_HUMAN"],QUALIFYING:["AWAITING_INFORMATION","READY_TO_QUOTE","REQUIRES_HUMAN","LOST"],
+  AWAITING_INFORMATION:["QUALIFYING","READY_TO_QUOTE","REQUIRES_HUMAN","LOST"],READY_TO_QUOTE:["QUOTED","REQUIRES_HUMAN","LOST"],
+  QUOTED:["FOLLOW_UP","BOOKED","REQUIRES_HUMAN","LOST"],FOLLOW_UP:["BOOKED","REQUIRES_HUMAN","LOST"],
+  BOOKED:["IN_PROGRESS","CANCELLED","REQUIRES_HUMAN"],IN_PROGRESS:["COMPLETED","REQUIRES_HUMAN","CANCELLED"],
+  COMPLETED:[],CANCELLED:[],LOST:[],REQUIRES_HUMAN:["QUALIFYING","READY_TO_QUOTE","QUOTED","BOOKED","CANCELLED","LOST"]
+};
+export function canTransitionServiceRequest(from:ServiceRequestStatus,to:ServiceRequestStatus){return from===to||allowed[from].includes(to)}
