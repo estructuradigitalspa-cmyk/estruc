@@ -13,7 +13,8 @@
         "typecheck": "tsc --noEmit",
         "test": "vitest run",
         "test:coverage": "vitest run --coverage",
-        "env:check": "node tools/verify-production-env.mjs"
+        "env:check": "node tools/verify-production-env.mjs",
+        "build:vercel": "npm run env:check && next build"
     },
     "dependencies": {
         "@supabase/ssr": "^0.12.4",
