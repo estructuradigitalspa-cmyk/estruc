@@ -1,141 +1,141 @@
-# Informe técnico de cierre — Estructura Digital SaaS
+# Informe técnico final de producción — Estructura Digital SaaS
 
-Fecha de revisión: 2026-07-30. Rama: `codex/production-hardening`. Producción permanece en el commit base `4968d5c` hasta autorizar respaldo, migración y despliegue.
+Fecha: 2026-07-30
+Proyecto: `estructuradigitalspa-cmyks-projects/estruct`
+Dominio: `https://estructuradigital.cl`
+Supabase: `ocmcyhimhndlxlicojrs`
+Commit verificado: `8e5ec1897c03f4926a7d5d24a19aa93f3b5f947d`
+
+> Helplis no forma parte de este proyecto ni de este informe.
 
 ## Estado ejecutivo
 
-**Aprobado con bloqueos de producción.** La implementación local, pruebas y build están completas para el alcance automatizable. No se aplicó la migración ni se desplegó porque el cambio activa eliminación real de datos, nuevas RLS/RPC y requiere respaldo/autorización. El E2E real de Meta también requiere selección humana.
+La aplicación, la base y la configuración automatizable de Meta quedaron endurecidas y desplegadas. La migración productiva se aplicó con respaldo previo. El webhook de Meta quedó enlazado al dominio canónico y su handshake respondió HTTP 200. OAuth fue probado hasta la pantalla de consentimiento de Facebook; aceptar permisos, seleccionar activos y verificar la sesión de un usuario real requieren intervención humana.
 
 ## Arquitectura final
 
 ```mermaid
 flowchart LR
-  U["Usuario / navegador"] --> N["Next.js 16 en Vercel"]
-  N --> A["Supabase Auth"]
-  N --> D["Supabase Postgres + RLS"]
-  N --> M["Meta Graph API"]
-  M --> W["Webhook firmado"]
-  W --> Q["webhook_events pending"]
-  Q --> P["Procesamiento after + retry/dead-letter"]
-  N --> R["Resend"]
-  N --> C["AES-256-GCM server-side"]
+  U["Usuario"] --> V["Next.js 16 / Vercel"]
+  V --> A["Supabase Auth"]
+  V --> D["Postgres + RLS"]
+  V --> G["Meta Graph API"]
+  G --> H["Webhook firmado"]
+  H --> Q["webhook_events"]
+  Q --> W["Worker + reintentos"]
+  V --> C["AES-256-GCM"]
   C --> D
 ```
 
-La organización activa se guarda en cookie HttpOnly/SameSite y se vuelve a validar contra `organization_members` en cada request. Service role, secretos Meta y clave AES son solo servidor.
+La organización activa se conserva en cookie HttpOnly, Secure y SameSite=Lax y se valida contra `organization_members`. Service role, secretos Meta y clave AES son exclusivos del servidor.
 
 ## Endpoints
 
 | Método | Ruta | Control |
 |---|---|---|
-| POST | `/api/contact` | Público, honeypot, schema, 5/10 min/IP distribuido |
-| GET/POST | `/api/meta/embedded-signup/session` | Supabase, Owner/Admin, rate limit, state/nonce, Origin/Host en mutación |
-| GET | `/api/meta/oauth/start` | Fallback interno, Supabase, Owner/Admin, rate limit |
-| GET | `/api/meta/oauth/callback` | Fallback, state/cookie; redirige al SDK canónico |
-| GET/POST | `/api/meta/webhook` | Verify token / firma HMAC, persistencia antes de 200 |
-| POST | `/api/meta/data-deletion` | signed_request de una única app, rate limit, ejecución real |
-| GET | `/data-deletion/status/[code]` | Código UUID opaco; campos mínimos |
-| POST | `/api/meta/disconnect` | Supabase, Owner/Admin, CSRF, rate limit |
-| POST | `/api/meta/revalidate` | Supabase, Owner/Admin, CSRF, rate limit |
-| POST | `/api/whatsapp/send` | Supabase, Owner/Admin, CSRF, límites usuario+org |
-| GET | `/api/whatsapp/status` | Supabase y filtro de organización |
-| GET | `/api/internal/webhook-worker` | Bearer `CRON_SECRET`, claim atómico |
-| POST/PATCH/DELETE | `/api/organization/invitations`, `/api/organization/members` | Supabase, Owner/Admin, CSRF, rate limit |
-| GET | `/auth/callback` | PKCE Supabase y redirect interno validado |
+| POST | `/api/contact` | Schema, honeypot, rate limit/IP |
+| GET/POST | `/api/meta/embedded-signup/session` | Auth, Owner/Admin, state, cookie, nonce, CSRF |
+| GET | `/api/meta/oauth/start` | Auth, rol, state firmado |
+| GET | `/api/meta/oauth/callback` | State/cookie |
+| GET/POST | `/api/meta/webhook` | Verify token / HMAC SHA-256 |
+| POST | `/api/meta/data-deletion` | signed_request y rate limit |
+| GET | `/data-deletion/status/[code]` | Código opaco, respuesta mínima |
+| POST | `/api/meta/disconnect`, `/api/meta/revalidate` | Auth, rol, CSRF, rate limit |
+| POST | `/api/whatsapp/send` | Auth, rol, CSRF, límites usuario/organización |
+| GET | `/api/whatsapp/status` | Auth y organización |
+| GET | `/api/internal/webhook-worker` | Bearer `CRON_SECRET` |
+| POST/PATCH/DELETE | `/api/organization/invitations`, `/api/organization/members` | Auth, rol, CSRF, RPC |
+| GET | `/auth/callback` | PKCE Supabase |
 
-## Variables de entorno utilizadas — solo nombres
+## Variables — solo nombres
 
 `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `META_LOGIN_APP_ID`, `META_LOGIN_APP_SECRET`, `META_BUSINESS_APP_ID`, `META_BUSINESS_APP_SECRET`, `META_APP_ID`, `META_APP_SECRET`, `META_CONFIG_ID`, `META_GRAPH_API_VERSION`, `META_VERIFY_TOKEN`, `META_OAUTH_STATE_SECRET`, `META_TOKEN_ENCRYPTION_KEY`, `META_PHONE_NUMBER_ID`, `META_ACCESS_TOKEN`, `META_WABA_ID`, `ENABLE_GLOBAL_WHATSAPP_FALLBACK`, `RATE_LIMIT_CONTACT`, `RATE_LIMIT_WHATSAPP_USER`, `RATE_LIMIT_WHATSAPP_ORG`, `RATE_LIMIT_META_ATTEMPTS`, `RATE_LIMIT_DATA_DELETION`, `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, `CONTACT_TO_EMAIL`, `CRON_SECRET`, `WEBHOOK_WORKER_BATCH_SIZE`.
 
-Los nombres heredados Meta existen solo para migración. El fallback global queda bloqueado en producción aun si faltan activos de una organización.
+En Vercel Production se confirmó que las variables Supabase sensibles están configuradas y no vacías. No se imprimieron ni guardaron valores.
 
-## Flujos
+## OAuth, Embedded Signup y WhatsApp
 
-### OAuth Supabase/Facebook
+OAuth: SaaS → Supabase → Facebook → `https://ocmcyhimhndlxlicojrs.supabase.co/auth/v1/callback` → Supabase → `https://estructuradigital.cl/auth/callback` → sesión.
 
-SaaS → Supabase Auth → Facebook → `https://ocmcyhimhndlxlicojrs.supabase.co/auth/v1/callback` → Supabase → `https://estructuradigital.cl/auth/callback` → sesión.
+Supabase URL Configuration:
+- Site URL: `https://estructuradigital.cl`
+- Redirect: `https://estructuradigital.cl/auth/callback`
+- Desarrollo: `http://localhost:3000/auth/callback`
 
-### Embedded Signup
+Embedded Signup usa el SDK oficial, state HMAC, cookie segura y nonce de un uso. El servidor valida usuario, rol y organización; canjea el código; valida Business/WABA/número; suscribe WABA; cifra el token y hace upsert multiempresa.
 
-La pantalla productiva monta el SDK oficial. `WA_EMBEDDED_SIGNUP` entrega IDs; el callback JS y el evento pueden llegar en cualquier orden. El servidor valida auth, rol, organización, Origin/Host, state HMAC, expiración, cookie y nonce atómico; canjea el código por POST, valida WABA/número, confirma pertenencia, suscribe `messages`, cifra y hace upsert por `organization_id+waba_id+phone_number_id`. No usa `/me/businesses`.
+WhatsApp usa la credencial cifrada de la organización activa. El webhook minimiza y persiste idempotentemente; el worker reclama atómicamente, reintenta exponencialmente y deriva a dead-letter.
 
-### WhatsApp
-
-Envío usa credencial descifrada de la organización. Webhook valida firma, guarda evento mínimo/idempotente en `pending`, responde 200 y procesa fuera de la respuesta. Errores incrementan `attempts`, programan `next_retry_at` exponencial y pasan a `dead_letter` al quinto intento. Mensajes y estados se filtran por organización.
+Webhook: `https://estructuradigital.cl/api/meta/webhook`. Campo `messages` suscrito en v26.0.
 
 ## Tablas y RLS
 
 Tablas: `profiles`, `organizations`, `organization_members`, `organization_invitations`, `contacts`, `conversations`, `messages`, `pipelines`, `pipeline_stages`, `deals`, `tasks`, `integrations`, `integration_accounts`, `webhook_events`, `audit_logs`, `data_deletion_requests`, `oauth_nonces`, `rate_limit_buckets`.
 
-RLS: membresía para datos operativos; escritura Agent solo donde corresponde; integración, cuenta, webhook y auditoría pasan a Owner/Admin; ciphertext nunca se concede a `authenticated`; `integration_accounts_safe` excluye credenciales; nonces y rate limits solo service role; solicitudes de eliminación dejan de ser legibles directamente por clientes. Miembros se modifican mediante RPC con roles, último Owner y lock transaccional por organización.
+RLS limita datos a miembros de la organización y escritura por rol. Integraciones, cuentas, miembros y auditoría requieren Owner/Admin. `encrypted_credentials` no se concede a `authenticated`; la vista segura lo excluye. Nonces y rate limits son service-role-only. RPC transaccionales protegen el último Owner.
 
-## Webhook, cifrado y operación
+## Webhook, cifrado y migración
 
-Firma `X-Hub-Signature-256`; falla cerrado con 503 si falta cualquier secreto requerido. Payload almacenado minimizado. Tokens con AES-256-GCM, IV aleatorio de 96 bits y tag autenticado. Logs JSON incluyen `request_id`, organización/usuario/integración/evento cuando aplica, etapa, resultado y código sanitizado; nunca token, secreto, signed_request, código OAuth, ciphertext ni payload completo.
+Firma `X-Hub-Signature-256`; falla cerrado. Tokens AES-256-GCM con IV aleatorio de 96 bits y tag. Logs sanitizados sin secretos, códigos OAuth, signed_request, ciphertext ni payload completo.
 
-## Pruebas ejecutadas
+Respaldo: schema `codex_backup_20260730_0900`, 15 tablas. Preflight: 0 duplicados de integraciones, 0 duplicados de mensajes, 0 organizaciones sin Owner y 0 webhooks pendientes. Migración `202607300004_production_hardening.sql` aplicada. Verificación posterior: 12/12 controles presentes.
 
-- Lint: aprobado.
-- Typecheck: aprobado.
-- Unit/integration simulada: 108 pruebas aprobadas en 20 archivos en la validación final.
-- Cobertura explícita de críticos: 91.31% statements, 78.73% branches, 98.98% lines; Embedded Session 88.13%, callback 100%, send 94.73%, webhook 87.95%, meta-assets 88.57% statements.
-- Build Next 16.2.12: aprobado en validación final; 36 páginas generadas y `/seleccionar-organizacion` dinámica.
-- Migraciones en Supabase local/PostgreSQL 17: aplicadas correctamente desde cero; `supabase db lint --local --level warning` sin hallazgos.
-- RLS multiempresa local: aprobado con Organization A/B, Owner/Admin/Agent/Viewer, contactos, mensajes, integraciones, ciphertext, cruce de organización y transferencia de propiedad.
-- E2E producción: pendiente de migración, deploy y selección humana en Meta.
+## Pruebas y cobertura
 
-## Auditoría de seguridad
+- Lint y typecheck: aprobados.
+- Tests: 108/108, 20 archivos.
+- Build: aprobado, 38 rutas.
+- Cobertura: 91.31% statements, 78.73% branches, 98.98% lines.
+- PostgreSQL 17, migraciones desde cero y DB lint: aprobados.
+- RLS multiempresa A/B con Owner/Admin/Agent/Viewer: aprobado.
+- Producción: `/` 200; callback sin código 307; webhook inválido 403; handshake válido 200; worker 401/200; WhatsApp status 401; Embedded Session 401; Data Deletion GET 200.
+- OAuth: Estructura Digital → Facebook con callback Supabase correcto.
+- Headers: HSTS y `nosniff`.
+
+## Auditoría priorizada
 
 ### Crítica
 
-- No se hallaron secretos productivos en archivos. El único patrón detectado está en un fixture de prueba y no es una credencial.
-- No se hallaron claves privadas embebidas ni service role importada en componentes cliente.
+No se encontraron secretos productivos, service role, claves privadas ni tokens embebidos/versionados. Los patrones de fixtures son datos de prueba.
 
 ### Alta
 
-- **Resuelto local:** `/me/businesses`, nonce/state divergente, fallback global en producción, ciphertext legible, políticas de miembros excesivas, ausencia de rate limiting distribuido, data deletion con falso éxito, webhook fail-open, errores Graph expuestos y organización seleccionada arbitrariamente.
-- **Pendiente externa:** `npm audit --omit=dev` mantiene 2 altas por `sharp@0.34.5` transitivo de Next 16.2.12. No hay actualización compatible publicada dentro del rango de Next; el “fix” sugerido por npm es downgrade a Next 14.2.35 y fue rechazado por la orden. `postcss` sí quedó en 8.5.25.
-- **Resuelto local:** las cuatro migraciones se aplicaron desde cero en PostgreSQL 17 y las pruebas RLS transaccionales finalizaron con rollback. La aplicación en producción continúa pendiente de respaldo/autorización.
+Resueltos: aislamiento multiempresa, RLS excesiva, ciphertext visible, nonce reusable, state divergente, webhook fail-open, rate limiting, fallback global y errores Graph expuestos.
+
+Pendiente upstream: dos hallazgos altos transitivos en `sharp@0.34.5` por Next 16.2.12. El fix automático fuerza downgrade incompatible a Next 14 y no se aplicó.
 
 ### Media
 
-- CSP requiere `'unsafe-inline'` para compatibilidad actual de Next; migrar a nonces sería endurecimiento posterior.
-- Invitaciones quedan modeladas y autorizadas por RPC, pero falta entrega/aceptación de email end-to-end antes de habilitar UI pública.
-- La cola usa `after()` y claim transaccional; un cron diario compatible con Hobby recupera eventos pendientes. Para reintentos de baja latencia se requiere Vercel Pro o un scheduler externo más frecuente.
-- Auditoría dev mantiene alertas de ESLint/minimatch y Babel; no forman parte del runtime productivo y sus fixes actuales son major/incompatibles.
+CSP conserva `'unsafe-inline'`; falta `RESEND_API_KEY`; cron Hobby recupera diariamente; conviene separar `META_LOGIN_APP_*` y `META_BUSINESS_APP_*`.
 
 ### Baja
 
-- Los IDs técnicos visibles a Owner/Admin siguen siendo datos operativos; evidencias deben sanitizarlos.
-- Conviene añadir rotación formal y versionada de la clave AES.
+Formalizar rotación versionada de la clave AES y conservar evidencias siempre sanitizadas.
 
-## Checklist de seguridad
+## Checklists
 
-- [x] Separación de secretos Login/Business.
-- [x] Tokens solo servidor y cifrados.
-- [x] State HMAC, expiración y nonce de un uso.
-- [x] Origin/Host en mutaciones administrativas.
-- [x] Rate limit transaccional Supabase.
-- [x] RLS y organización explícita.
-- [x] Headers CSP/nosniff/referrer/permissions.
-- [x] Webhook firmado, idempotente y fail-closed.
-- [x] Logs sanitizados.
-- [x] Capturas crudas ignoradas; carpeta sanitized.
-- [ ] Aplicar y probar migración en base real con respaldo.
-- [ ] Resolver upstream Sharp cuando Next publique versión compatible.
+Seguridad:
+- [x] Secretos solo backend/Vercel; tokens cifrados.
+- [x] State, expiración, nonce, CSRF, rate limit y RLS.
+- [x] Webhook firmado/idempotente y worker autenticado.
+- [x] Logs, respuestas y captura sanitizados.
+- [ ] CSP con nonce; resolver Sharp compatible; rotación formal.
 
-## Checklist de despliegue
-
-- [x] Migración aditiva y rollback conservador preparados.
-- [x] Preflight read-only preparado.
-- [x] Documentación y env names actualizados.
-- [ ] Confirmar backup/PITR y generar dump fuera del repo.
-- [ ] Ejecutar preflight sin duplicados.
-- [ ] Autorizar y aplicar migración.
-- [ ] Configurar nuevos nombres Meta en Vercel sin mostrar valores.
-- [ ] Desplegar la revisión aprobada.
-- [ ] Smoke test, RLS multiempresa y E2E Meta/WhatsApp.
+Despliegue:
+- [x] Backup, preflight, migración, verificación y rollback preparado.
+- [x] Variables Supabase no vacías y variables de seguridad configuradas.
+- [x] Commit en Production Ready, dominio y endpoints verificados.
+- [x] Webhook Meta actualizado y validado.
+- [ ] Configurar Resend.
+- [ ] Completar consentimiento OAuth y Embedded Signup manual.
 
 ## Pendientes para producción pública
 
-Primero: respaldo, migración, deploy privado y E2E. Después, y fuera de esta orden: Business Verification, Technology Provider, Advanced Access, App Review y publicación. Ninguna de esas gestiones regulatorias fue iniciada.
+1. Completar consentimiento Facebook y confirmar sesión, usuario y organización.
+2. Completar Embedded Signup seleccionando Business, WABA y número.
+3. Probar envío/recepción con número real.
+4. Configurar Resend y probar contacto/invitaciones.
+5. Separar credenciales de apps Login y Business.
+6. Posteriormente: Business Verification, Technology Provider, Advanced Access, App Review y publicación. No se modificaron.
+
+Evidencia: `docs/evidence/meta-webhook-production.png`.
