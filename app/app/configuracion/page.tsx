@@ -1,0 +1,1 @@
+﻿import { Settings } from "lucide-react"; import { AppPage } from "@/components/app-shell/app-page"; export default function Page(){return <AppPage eyebrow="Cuenta" title="Configuración" description="Preferencias y datos de la organización." icon={Settings} emptyTitle="Sin cambios pendientes." emptyDescription="La configuración avanzada se incorporará de forma gradual."/>}

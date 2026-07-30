@@ -1,0 +1,1 @@
+﻿import { Users } from "lucide-react"; import { AppPage } from "@/components/app-shell/app-page"; export default function Page(){return <AppPage eyebrow="Organización" title="Equipo" description="Miembros, roles y acceso a la plataforma." icon={Users} emptyTitle="Solo está el propietario." emptyDescription="Invita integrantes cuando la gestión de usuarios esté habilitada."/>}

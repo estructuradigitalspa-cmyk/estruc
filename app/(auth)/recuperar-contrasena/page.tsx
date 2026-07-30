@@ -1,0 +1,3 @@
+﻿import Link from "next/link"; import { AuthCard } from "@/components/app-shell/auth-card"; import { resetPassword } from "../actions";
+export default async function Page({searchParams}:{searchParams:Promise<{error?:string}>}){const p=await searchParams;return <AuthCard title="Recupera tu acceso" description="Enviaremos instrucciones al correo si existe una cuenta asociada." footer={<Link href="/iniciar-sesion">Volver al inicio de sesión</Link>}><>{p.error&&<p className="form-status error">{p.error}</p>}<form action={resetPassword} className="auth-form"><label>Correo<input name="email" type="email" required autoComplete="email"/></label><button className="button button-primary">Enviar instrucciones</button></form></></AuthCard>}
+

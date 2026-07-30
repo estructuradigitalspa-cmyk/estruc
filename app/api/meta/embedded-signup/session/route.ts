@@ -1,0 +1,1 @@
+﻿import { NextResponse } from "next/server"; export async function POST(){if(!process.env.META_APP_ID||!process.env.META_CONFIG_ID)return NextResponse.json({error:"Embedded Signup todavía no está configurado"},{status:503});return NextResponse.json({error:"El intercambio de sesión se habilitará tras configurar y aprobar la app de Meta."},{status:501})}

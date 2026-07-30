@@ -1,0 +1,1 @@
+﻿import { CheckSquare } from "lucide-react"; import { AppPage } from "@/components/app-shell/app-page"; export default function Page(){return <AppPage eyebrow="Seguimiento" title="Tareas" description="Responsables, vencimientos y prioridades." icon={CheckSquare} emptyTitle="No hay tareas pendientes." emptyDescription="Las tareas manuales y automáticas se mostrarán aquí."/>}

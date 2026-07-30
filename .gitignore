@@ -11,3 +11,7 @@ out/
 .DS_Store
 Thumbs.db
 *.tsbuildinfo
+
+.supabase/
+supabase/.temp/
+coverage/

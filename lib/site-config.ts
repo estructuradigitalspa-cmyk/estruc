@@ -5,7 +5,8 @@
   email: "contacto@estructuradigital.cl", phone: "+56 9 8225 7474", phoneHref: "+56982257474", country: "Chile",
   navigation: [
     { label: "Servicios", href: "/servicios" }, { label: "Soluciones", href: "/soluciones" },
-    { label: "Plataforma", href: "/plataforma" }, { label: "Proveedor de tecnología", href: "/proveedor-tecnologia" },
+    { label: "Plataforma", href: "/plataforma" }, { label: "Integraciones", href: "/integraciones" }, { label: "Proveedor de tecnología", href: "/proveedor-tecnologia" },
     { label: "Nosotros", href: "/nosotros" },
   ],
 } as const;
+

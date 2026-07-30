@@ -1,0 +1,1 @@
+﻿import { NextResponse } from "next/server"; export function GET(request:Request){const configured=Boolean(process.env.META_APP_ID&&process.env.META_APP_SECRET);return NextResponse.redirect(new URL(configured?"/app/integraciones/meta?estado=pendiente":"/app/integraciones/meta?estado=no-configurado",request.url))}

@@ -79,3 +79,52 @@ Crea antes un repositorio vacío en GitHub. No subas `.env.local`.
 - Crear la app de Meta por separado; luego validar firmas, OAuth, callbacks y permisos mínimos.
 - Verificar URLs legales en Meta, DNS, HTTPS, favicon, Open Graph, sitemap y robots.
 - Ejecutar `npm run lint`, `npm run typecheck` y `npm run build`.
+
+## MVP SaaS y Supabase
+
+Las rutas `/app/*` requieren Supabase Auth. Sin variables configuradas, el sistema muestra un estado de configuración y no simula sesiones.
+
+### Crear el proyecto Supabase
+
+1. Crea un proyecto exclusivo para Estructura Digital.
+2. En **SQL Editor**, ejecuta `supabase/migrations/202607290001_initial_multitenant.sql`.
+3. Configura la URL del sitio y redirects permitidos para `/auth/callback`.
+4. Copia URL, Anon Key y Service Role a variables locales y de Vercel. La Service Role nunca debe usar el prefijo `NEXT_PUBLIC_`.
+5. Habilita confirmación por correo antes de producción y personaliza las plantillas.
+
+La migración crea tablas, índices, trigger de perfil, función transaccional de onboarding, roles y políticas RLS. `supabase/seed.sql` no contiene datos ficticios.
+
+### Rutas SaaS
+
+- Autenticación: `/registro`, `/iniciar-sesion`, `/recuperar-contrasena`, `/auth/callback`.
+- Onboarding: `/onboarding`.
+- Panel: `/app/inicio`, contactos, conversaciones, CRM, tareas, automatizaciones, integraciones, equipo y configuración.
+- WhatsApp: `/app/integraciones/whatsapp`, preparada sin simular Embedded Signup.
+
+### Meta
+
+Documentación en `docs/meta-app-review.md`, `docs/meta-architecture.md`, `docs/security-model.md` y `docs/data-flow.md`.
+
+El webhook POST requiere `META_APP_SECRET` para validar `X-Hub-Signature-256` y `SUPABASE_SERVICE_ROLE_KEY` para persistir eventos idempotentes. No se deben reutilizar credenciales de otras aplicaciones.
+
+### Pruebas
+
+```bash
+npm run lint
+npm run typecheck
+npm run test
+npm run build
+```
+
+Las pruebas sin una instancia Supabase validan contratos de esquema, RLS, idempotencia, seguridad Meta, formulario y presencia de rutas. Antes de producción se deben agregar pruebas de integración contra un proyecto Supabase aislado.
+
+### Checklist adicional de producción
+
+- [ ] Proyecto Supabase exclusivo y migración aplicada.
+- [ ] Redirects de Auth y correo transaccional configurados.
+- [ ] Variables Supabase y Resend cargadas en Vercel.
+- [ ] Rate limiting distribuido para contacto y endpoints sensibles.
+- [ ] Revisión jurídica de políticas.
+- [ ] Pruebas de aislamiento con usuarios reales en dos organizaciones de ensayo.
+- [ ] App de Meta propia, Embedded Signup y permisos mínimos.
+- [ ] Rotación, cifrado y retención de tokens definidos.
