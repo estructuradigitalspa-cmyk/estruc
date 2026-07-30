@@ -1,3 +1,29 @@
-﻿import { randomUUID } from "node:crypto"; import { NextResponse } from "next/server"; import { parseSignedRequest } from "@/lib/meta-security"; import { createAdminClient } from "@/lib/supabase/admin";
-export async function POST(request:Request){const secret=process.env.META_APP_SECRET;if(!secret||!process.env.SUPABASE_SERVICE_ROLE_KEY)return NextResponse.json({error:"Callback de eliminación no configurado",instructions:`${process.env.NEXT_PUBLIC_SITE_URL||"https://estructuradigital.cl"}/eliminacion-de-datos`},{status:503});const body=await request.formData();const signed=String(body.get("signed_request")||"");const payload=parseSignedRequest(signed,secret);if(!payload)return NextResponse.json({error:"Solicitud inválida"},{status:401});const confirmationCode=randomUUID();const supabase=createAdminClient();const{error}=await supabase.from("data_deletion_requests").insert({provider:"meta",external_user_id:String(payload.user_id||"unknown"),confirmation_code:confirmationCode,status:"received"});if(error)return NextResponse.json({error:"No fue posible registrar la solicitud"},{status:500});return NextResponse.json({url:`${process.env.NEXT_PUBLIC_SITE_URL||"https://estructuradigital.cl"}/eliminacion-de-datos?codigo=${confirmationCode}`,confirmation_code:confirmationCode})}
-export function GET(){return NextResponse.json({status:"not_configured",instructions:`${process.env.NEXT_PUBLIC_SITE_URL||"https://estructuradigital.cl"}/eliminacion-de-datos`},{status:501})}
+import { randomUUID } from "node:crypto";
+import { NextResponse } from "next/server";
+import { parseSignedRequest } from "@/lib/meta-security";
+
+type DeletionPayload = { user_id?: string | number };
+
+export async function POST(request: Request) {
+  const secret = process.env.META_APP_SECRET;
+  if (!secret) return NextResponse.json({ error: "Meta callback is not configured" }, { status: 503 });
+  let signedRequest = "";
+  const contentType = request.headers.get("content-type") || "";
+  if (contentType.includes("application/json")) {
+    const json = await request.json().catch(() => ({})) as { signed_request?: unknown };
+    signedRequest = typeof json.signed_request === "string" ? json.signed_request : "";
+  } else {
+    const form = await request.formData().catch(() => null);
+    signedRequest = String(form?.get("signed_request") || "");
+  }
+  const payload = parseSignedRequest(signedRequest, secret) as DeletionPayload | null;
+  if (!payload?.user_id) return NextResponse.json({ error: "Invalid signed_request" }, { status: 401 });
+  const confirmationCode = randomUUID();
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://estructuradigital.cl";
+  console.info("Meta data-deletion request received", { provider: "meta", externalUserId: String(payload.user_id), confirmationCode, status: "received", nextStep: "Resolve user, organization and integrations before verified deletion" });
+  return NextResponse.json({ url: `${baseUrl}/data-deletion?code=${confirmationCode}`, confirmation_code: confirmationCode });
+}
+
+export function GET() {
+  return NextResponse.json({ status: "ready", instructions: `${process.env.NEXT_PUBLIC_SITE_URL || "https://estructuradigital.cl"}/data-deletion` });
+}

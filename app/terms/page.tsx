@@ -1,0 +1,27 @@
+import type { Metadata } from "next";
+import { PageHero } from "@/components/page-hero";
+import { siteConfig } from "@/lib/site-config";
+
+export const metadata: Metadata = { title: "Términos y Condiciones", description: "Términos de uso de Estructura Digital.", alternates: { canonical: "/terms" } };
+
+export default function TermsPage() {
+  return <><PageHero eyebrow="Información legal" title="Términos y Condiciones" description="Reglas aplicables al uso del sitio, la plataforma y sus integraciones empresariales."/>
+    <section className="section"><div className="container legal-layout">
+      <aside className="legal-aside">Vigentes desde: 29 de julio de 2026<br/><br/>{siteConfig.legalName}<br/>{siteConfig.country}<br/><a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a></aside>
+      <article className="prose">
+        <h2>1. Aceptación y alcance</h2><p>Al acceder al sitio, crear una cuenta o usar los servicios de {siteConfig.legalName}, aceptas estos términos. Los servicios contratados pueden regirse además por una propuesta, orden o contrato; en caso de conflicto, ese documento prevalece respecto de su objeto.</p>
+        <h2>2. Uso del servicio y cuentas</h2><p>Debes entregar información exacta, mantener seguras tus credenciales y asegurar que cada usuario tenga autorización. Eres responsable de la actividad de tu organización, la legalidad de los datos y contenidos cargados, y de obtener consentimientos o bases de tratamiento necesarios. No puedes usar el servicio para fraude, spam, suplantación, acceso indebido, infracción de derechos, contenido ilegal o violación de políticas de terceros.</p>
+        <h2>3. Servicios, cambios y disponibilidad</h2><p>Ofrecemos automatización, CRM, mensajería, integraciones, desarrollo y soporte según el plan o contrato. Podemos mejorar o modificar funciones para seguridad, cumplimiento o evolución técnica. Procuramos continuidad razonable, pero no garantizamos que el servicio sea ininterrumpido o libre de errores.</p>
+        <h2>4. Integraciones con Meta y terceros</h2><p>WhatsApp, Facebook, Messenger, Instagram, Meta Business y otros productos conectados son operados por terceros. Debes cumplir sus políticas y mantener derechos sobre los activos vinculados. No controlamos sus APIs, revisiones, interrupciones, precios, restricciones o decisiones de suspensión. Puedes revocar una integración; algunas funciones dejarán de operar inmediatamente.</p>
+        <h2>5. Responsabilidades del cliente</h2><p>El cliente determina las instrucciones, audiencias, contenido y comunicaciones ejecutadas mediante su cuenta. Debe respetar normativa de privacidad, consumo, publicidad y mensajería; atender derechos de sus contactos; configurar permisos adecuados; revisar automatizaciones antes de activarlas; y mantener respaldos o exportaciones requeridos por su operación.</p>
+        <h2>6. Tarifas y pagos</h2><p>Precios, impuestos, periodicidad, reajustes, gastos de terceros y condiciones de pago se indican en el plan o contrato. El atraso puede producir limitación o suspensión previa notificación razonable, salvo que una medida inmediata sea necesaria para proteger el servicio.</p>
+        <h2>7. Suspensión y terminación</h2><p>Podemos limitar o suspender cuentas por incumplimiento, riesgo de seguridad, uso abusivo, impago, orden legal o suspensión de un proveedor conectado. Cuando sea razonable, notificaremos y permitiremos subsanar. Cualquiera de las partes puede terminar conforme al contrato. La exportación y eliminación posterior se sujetan al plan, esta política y obligaciones de conservación.</p>
+        <h2>8. Propiedad intelectual</h2><p>Estructura Digital y sus licenciantes conservan los derechos sobre la plataforma, marca, diseño, código, documentación y mejoras. Te otorgamos una licencia limitada, no exclusiva, revocable y no transferible para usar el servicio contratado. El cliente conserva derechos sobre sus datos y contenidos y nos autoriza a procesarlos únicamente para prestar, proteger y mejorar el servicio de forma agregada o anonimizada.</p>
+        <h2>9. Confidencialidad y privacidad</h2><p>Cada parte protegerá la información confidencial de la otra con cuidado razonable y la usará solo para la relación comercial. El tratamiento de datos personales se describe en nuestra <a href="/privacy">Política de Privacidad</a>.</p>
+        <h2>10. Garantías</h2><p>Prestamos el servicio con diligencia profesional razonable. Salvo garantías que la ley no permita excluir, el servicio se entrega según disponibilidad y no garantizamos resultados comerciales específicos, compatibilidad perpetua con terceros ni que toda automatización sea adecuada sin supervisión del cliente.</p>
+        <h2>11. Limitación de responsabilidad</h2><p>En la máxima medida permitida por la ley, ninguna parte responderá por daños indirectos, pérdida de utilidades, oportunidades, reputación o datos derivados de causas fuera de control razonable. La responsabilidad total de Estructura Digital vinculada al servicio no excederá los montos pagados por el cliente por el servicio afectado durante los seis meses anteriores al hecho, salvo dolo, culpa grave o responsabilidad que legalmente no pueda limitarse.</p>
+        <h2>12. Ley aplicable y contacto</h2><p>Estos términos se rigen por las leyes de Chile. Las controversias se someterán a los tribunales competentes de Chile, sin perjuicio de derechos irrenunciables. Consultas: <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>.</p>
+      </article>
+    </div></section>
+  </>;
+}
