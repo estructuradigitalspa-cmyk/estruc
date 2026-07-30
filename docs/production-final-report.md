@@ -80,7 +80,8 @@ Firma `X-Hub-Signature-256`; falla cerrado con 503 si falta cualquier secreto re
 - Unit/integration simulada: 108 pruebas aprobadas en 20 archivos en la validación final.
 - Cobertura explícita de críticos: 91.31% statements, 78.73% branches, 98.98% lines; Embedded Session 88.13%, callback 100%, send 94.73%, webhook 87.95%, meta-assets 88.57% statements.
 - Build Next 16.2.12: aprobado en validación final; 36 páginas generadas y `/seleccionar-organizacion` dinámica.
-- RLS real/local: bloqueado; Docker Desktop no está iniciado y la migración no se aplicó a producción.
+- Migraciones en Supabase local/PostgreSQL 17: aplicadas correctamente desde cero; `supabase db lint --local --level warning` sin hallazgos.
+- RLS multiempresa local: aprobado con Organization A/B, Owner/Admin/Agent/Viewer, contactos, mensajes, integraciones, ciphertext, cruce de organización y transferencia de propiedad.
 - E2E producción: pendiente de migración, deploy y selección humana en Meta.
 
 ## Auditoría de seguridad
@@ -94,7 +95,7 @@ Firma `X-Hub-Signature-256`; falla cerrado con 503 si falta cualquier secreto re
 
 - **Resuelto local:** `/me/businesses`, nonce/state divergente, fallback global en producción, ciphertext legible, políticas de miembros excesivas, ausencia de rate limiting distribuido, data deletion con falso éxito, webhook fail-open, errores Graph expuestos y organización seleccionada arbitrariamente.
 - **Pendiente externa:** `npm audit --omit=dev` mantiene 2 altas por `sharp@0.34.5` transitivo de Next 16.2.12. No hay actualización compatible publicada dentro del rango de Next; el “fix” sugerido por npm es downgrade a Next 14.2.35 y fue rechazado por la orden. `postcss` sí quedó en 8.5.25.
-- **Pendiente validación:** RLS/migración no probadas contra una instancia Postgres real.
+- **Resuelto local:** las cuatro migraciones se aplicaron desde cero en PostgreSQL 17 y las pruebas RLS transaccionales finalizaron con rollback. La aplicación en producción continúa pendiente de respaldo/autorización.
 
 ### Media
 

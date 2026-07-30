@@ -1,4 +1,4 @@
-﻿-- Estructura Digital SaaS — esquema inicial multi-tenant
+-- Estructura Digital SaaS — esquema inicial multi-tenant
 create extension if not exists pgcrypto;
 create type public.organization_role as enum ('owner','admin','agent','viewer');
 

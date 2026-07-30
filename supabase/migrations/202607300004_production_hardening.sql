@@ -73,3 +73,10 @@ begin
 end $$;
 revoke all on function public.accept_invitation(uuid) from public,anon;
 grant execute on function public.accept_invitation(uuid) to authenticated;
+-- Explicit API privileges; RLS remains the authorization boundary.
+grant select on public.profiles,public.organizations,public.organization_members to authenticated;
+grant select,insert,update,delete on public.contacts,public.conversations,public.messages,public.deals,public.tasks to authenticated;
+grant select,insert,update,delete on public.pipelines,public.pipeline_stages to authenticated;
+grant select,insert,update,delete on public.integrations to authenticated;
+grant insert,update,delete on public.integration_accounts to authenticated;
+grant select on public.webhook_events,public.audit_logs,public.organization_invitations to authenticated;

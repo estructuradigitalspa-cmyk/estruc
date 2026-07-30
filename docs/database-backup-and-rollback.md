@@ -9,3 +9,5 @@ Antes de aplicar producción:
 5. Desplegar la misma revisión de código solo después de que la migración termine.
 
 Rollback de objetos: `supabase/rollback_202607300004.sql`. Las columnas se conservan deliberadamente para evitar pérdida. Para rollback de datos o desastre, restaurar al recovery point documentado. La eliminación de duplicados o datos reales requiere autorización separada.
+
+Validación local reproducible: `npx supabase start`, `npx supabase db reset --local` y ejecutar `supabase/tests/production_hardening_rls.sql` con `ON_ERROR_STOP=1`. El script usa una transacción y termina en `ROLLBACK`.
