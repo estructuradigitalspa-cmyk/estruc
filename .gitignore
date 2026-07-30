@@ -1,4 +1,4 @@
-﻿node_modules/
+node_modules/
 .next/
 out/
 .env
@@ -16,3 +16,6 @@ Thumbs.db
 supabase/.temp/
 coverage/
 .vercel
+
+capturas/
+evidence/raw/

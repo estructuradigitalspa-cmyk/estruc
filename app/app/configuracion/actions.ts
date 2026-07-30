@@ -1,0 +1,5 @@
+"use server";
+import {cookies} from "next/headers";
+import {redirect} from "next/navigation";
+import {createClient} from "@/lib/supabase/server";
+export async function selectOrganization(formData:FormData){const organizationId=String(formData.get("organization_id")||"");const supabase=await createClient();const{data:{user}}=await supabase.auth.getUser();if(!user)redirect("/iniciar-sesion");const{data}=await supabase.from("organization_members").select("organization_id").eq("user_id",user.id).eq("organization_id",organizationId).maybeSingle();if(!data)redirect("/app/configuracion?organization=invalid");const store=await cookies();store.set("active_organization_id",organizationId,{httpOnly:true,secure:process.env.NODE_ENV==="production",sameSite:"lax",path:"/",maxAge:60*60*24*365});redirect("/app/inicio")}

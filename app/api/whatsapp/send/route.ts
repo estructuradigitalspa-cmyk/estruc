@@ -2,10 +2,17 @@ import { NextResponse } from "next/server";
 import { getApiContext } from "@/lib/supabase/api-context";
 import { whatsappSendSchema } from "@/lib/whatsapp";
 import { getOrganizationWhatsAppConfig } from "@/lib/whatsapp-organization-config";
+import { consumeRateLimit } from "@/lib/rate-limit";
+import { csrfError, validateMutationOrigin } from "@/lib/request-security";
+import { operationalLog } from "@/lib/structured-log";
 
 export async function POST(request: Request) {
+  if (!validateMutationOrigin(request)) return csrfError();
   const context = await getApiContext();
   if (!context) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  const userRate = await consumeRateLimit({ scope: "whatsapp_send_user", subject: context.user.id, limit: Number(process.env.RATE_LIMIT_WHATSAPP_USER || 30), windowSeconds: 60 });
+  const orgRate = await consumeRateLimit({ scope: "whatsapp_send_org", subject: context.organizationId, limit: Number(process.env.RATE_LIMIT_WHATSAPP_ORG || 100), windowSeconds: 60 });
+  if (!userRate.allowed || !orgRate.allowed) return NextResponse.json({ error: "Rate limit" }, { status: 429 });
   if (!["owner", "admin"].includes(context.role)) {
     return NextResponse.json({ error: "Permisos insuficientes" }, { status: 403 });
   }
@@ -17,7 +24,7 @@ export async function POST(request: Request) {
   try {
     config = await getOrganizationWhatsAppConfig(context.organizationId);
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Configuración inválida" }, { status: 503 });
+    const code=error instanceof Error&&error.message==="WHATSAPP_NOT_CONNECTED"?"WHATSAPP_NOT_CONNECTED":"WHATSAPP_CONFIGURATION_ERROR"; operationalLog("error",{organization_id:context.organizationId,user_id:context.user.id,stage:"whatsapp_send",result:"blocked",error_code:code}); return NextResponse.json({ error: code }, { status: 503 });
   }
 
   const response = await fetch(
@@ -43,9 +50,9 @@ export async function POST(request: Request) {
     error?: { message?: string; code?: number };
   };
   if (!response.ok || !graphResult.messages?.[0]?.id) {
-    console.warn("[whatsapp:send]", { ok: false, status: response.status, code: graphResult.error?.code });
+    operationalLog("error", { organization_id: context.organizationId, user_id: context.user.id, stage: "whatsapp_send", result: "failed", error_code: String(graphResult.error?.code || response.status || "META_REJECTED") });
     return NextResponse.json(
-      { error: graphResult.error?.message || "Meta rechazó el mensaje", code: graphResult.error?.code },
+      { error: "Meta rechazó el mensaje", code: graphResult.error?.code },
       { status: response.status || 502 },
     );
   }
@@ -112,6 +119,6 @@ export async function POST(request: Request) {
       );
     }
   }
-  console.info("[whatsapp:send]", { ok: true, messageId: externalId.slice(0, 12) });
+  operationalLog("info", { organization_id: context.organizationId, user_id: context.user.id, stage: "whatsapp_send", result: "sent" });
   return NextResponse.json({ ok: true, messageId: externalId, status: "sent" });
 }

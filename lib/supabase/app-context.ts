@@ -1,10 +1,2 @@
-﻿import { redirect } from "next/navigation"; import { createClient } from "./server"; import { isSupabaseConfigured } from "./config";
-export async function requireAppContext(){
-  if(!isSupabaseConfigured()) redirect("/iniciar-sesion?config=missing");
-  const supabase=await createClient(); const {data:{user}}=await supabase.auth.getUser(); if(!user) redirect("/iniciar-sesion?returnTo=/app");
-  const {data:membership}=await supabase.from("organization_members").select("organization_id,role,organizations(id,name)").eq("user_id",user.id).limit(1).maybeSingle();
-  if(!membership) redirect("/onboarding");
-  const orgValue=membership.organizations as unknown as {id:string;name:string}|{id:string;name:string}[]|null;
-  const organization=Array.isArray(orgValue)?orgValue[0]:orgValue;
-  return {supabase,user,membership,organization:{id:membership.organization_id,name:organization?.name||"Mi organización"}};
-}
+import {cookies} from "next/headers";import {redirect} from "next/navigation";import {createClient} from "./server";import {isSupabaseConfigured} from "./config";
+export async function requireAppContext(){if(!isSupabaseConfigured())redirect("/iniciar-sesion?config=missing");const supabase=await createClient();const{data:{user}}=await supabase.auth.getUser();if(!user)redirect("/iniciar-sesion?returnTo=/app");const store=await cookies();const selected=store.get("active_organization_id")?.value;let query=supabase.from("organization_members").select("organization_id,role,organizations(id,name)").eq("user_id",user.id);if(selected)query=query.eq("organization_id",selected);const{data:memberships}=await query.limit(selected?1:2);if(!memberships?.length){if(selected)redirect("/seleccionar-organizacion?error=invalid");redirect("/onboarding")}if(!selected&&memberships.length>1)redirect("/seleccionar-organizacion");const membership=memberships[0];const orgValue=membership.organizations as unknown as {id:string;name:string}|{id:string;name:string}[]|null;const organization=Array.isArray(orgValue)?orgValue[0]:orgValue;return{supabase,user,membership,organization:{id:membership.organization_id,name:organization?.name||"Mi organización"}}}

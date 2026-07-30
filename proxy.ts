@@ -1,3 +1,3 @@
-﻿import type { NextRequest } from "next/server"; import { updateSession } from "@/lib/supabase/middleware";
+import type { NextRequest } from "next/server"; import { updateSession } from "@/lib/supabase/middleware";
 export async function proxy(request:NextRequest){return updateSession(request)}
-export const config={matcher:["/app/:path*","/onboarding","/iniciar-sesion","/registro","/recuperar-contrasena"]};
+export const config={matcher:["/app/:path*","/onboarding","/iniciar-sesion","/registro","/recuperar-contrasena","/actualizar-contrasena","/seleccionar-organizacion"]};

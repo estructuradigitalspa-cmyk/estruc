@@ -1,0 +1,4 @@
+import {createHash} from "node:crypto";import {createAdminClient} from "@/lib/supabase/admin";
+type Limit={scope:string;subject:string;limit:number;windowSeconds:number};
+export async function consumeRateLimit(v:Limit){const admin=createAdminClient();const hash=createHash("sha256").update(`${v.scope}:${v.subject}`).digest("hex");const{data,error}=await admin.rpc("consume_rate_limit",{s:v.scope,h:hash,w:v.windowSeconds,l:v.limit}).single();if(error)throw error;return data as {allowed:boolean;current_count:number;retry_after:number}}
+export function clientIp(request:Request){return request.headers.get("x-vercel-forwarded-for")?.split(",")[0]?.trim()||request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()||"unknown"}

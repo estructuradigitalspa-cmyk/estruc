@@ -1,17 +1,2 @@
-import { createClient } from "@/lib/supabase/server";
-
-export async function getApiContext() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
-  const { data: membership } = await supabase
-    .from("organization_members")
-    .select("organization_id,role")
-    .eq("user_id", user.id)
-    .limit(1)
-    .maybeSingle();
-  if (!membership) return null;
-  return { supabase, user, organizationId: membership.organization_id, role: membership.role };
-}
+import {cookies} from "next/headers";import {createClient} from "@/lib/supabase/server";
+export async function getApiContext(){const supabase=await createClient();const{data:{user}}=await supabase.auth.getUser();if(!user)return null;const store=await cookies();const selected=store.get("active_organization_id")?.value;let query=supabase.from("organization_members").select("organization_id,role").eq("user_id",user.id);if(selected)query=query.eq("organization_id",selected);const{data:memberships}=await query.limit(selected?1:2);if(!memberships?.length||(!selected&&memberships.length!==1))return null;const membership=memberships[0];return{supabase,user,organizationId:membership.organization_id,role:membership.role}}

@@ -23,6 +23,8 @@ export async function getOrganizationWhatsAppConfig(organizationId: string) {
       source: "organization" as const,
     };
   }
+  const fallbackAllowed = process.env.NODE_ENV !== "production" && process.env.ENABLE_GLOBAL_WHATSAPP_FALLBACK === "true";
+  if (!fallbackAllowed) throw new Error("WHATSAPP_NOT_CONNECTED");
   const fallback = getWhatsAppServerConfig();
   return { ...fallback, wabaId: process.env.META_WABA_ID || null, source: "test" as const };
 }

@@ -1,1 +1,3 @@
-﻿import { defineConfig } from "vitest/config"; import path from "node:path"; export default defineConfig({test:{environment:"node",coverage:{provider:"v8",reporter:["text","json-summary"]}},resolve:{alias:{"@":path.resolve(__dirname,".")}}});
+import {defineConfig} from "vitest/config";
+import path from "node:path";
+export default defineConfig({test:{environment:"node",coverage:{provider:"v8",reporter:["text","json-summary"],include:["lib/meta-assets.ts","lib/meta-oauth-state.ts","lib/meta-security.ts","lib/request-security.ts","lib/whatsapp.ts","lib/whatsapp-webhook.ts","app/api/meta/embedded-signup/session/route.ts","app/api/meta/oauth/callback/route.ts","app/api/whatsapp/send/route.ts"]}},resolve:{alias:{"@":path.resolve(__dirname,".")}}});

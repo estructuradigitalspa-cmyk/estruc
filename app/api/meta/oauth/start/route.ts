@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getApiContext } from "@/lib/supabase/api-context";
 import { createMetaOAuthState } from "@/lib/meta-oauth-state";
+import { consumeRateLimit } from "@/lib/rate-limit";
 
 export async function GET() {
   const context = await getApiContext();
@@ -8,7 +9,9 @@ export async function GET() {
   if (!["owner", "admin"].includes(context.role)) {
     return NextResponse.redirect("https://estructuradigital.cl/app/integraciones/whatsapp?meta=forbidden");
   }
-  const appId = process.env.META_APP_ID;
+  const rate = await consumeRateLimit({ scope: "meta_oauth_start", subject: context.user.id, limit: Number(process.env.RATE_LIMIT_META_ATTEMPTS || 10), windowSeconds: 900 });
+  if (!rate.allowed) return NextResponse.redirect("https://estructuradigital.cl/app/integraciones/whatsapp?meta=rate_limited");
+  const appId = process.env.META_BUSINESS_APP_ID || process.env.META_APP_ID;
   const configId = process.env.META_CONFIG_ID;
   if (!appId || !configId) {
     return NextResponse.redirect("https://estructuradigital.cl/app/integraciones/whatsapp?meta=missing");

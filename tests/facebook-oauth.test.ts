@@ -14,7 +14,7 @@ describe("Facebook OAuth de producción", () => {
     expect(login).toContain('provider: "facebook"');
     expect(login).toContain("/auth/callback?next=/app");
     expect(signup).toContain("config_id");
-    expect(signup).toContain('response_type: "code"');
-    expect(signup).toContain("override_default_response_type: true");
+    expect(signup).toContain('response_type:"code"');
+    expect(signup).toContain("override_default_response_type:true");
   });
 });
