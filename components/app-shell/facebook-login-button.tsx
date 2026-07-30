@@ -14,7 +14,7 @@ export function FacebookLoginButton() {
       const supabase = createClient();
       const { error: oauthError } = await supabase.auth.signInWithOAuth({
         provider: "facebook",
-        options: { redirectTo: `${window.location.origin}/auth/callback?next=/app`, scopes: "email,public_profile" },
+        options: { redirectTo: `${window.location.origin}/auth/callback?next=/app` },
       });
       if (oauthError) throw oauthError;
     } catch {
