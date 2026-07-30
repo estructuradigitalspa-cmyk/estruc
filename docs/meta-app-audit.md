@@ -11,7 +11,7 @@ Las dos apps **no están listas para producción**. El código separa razonablem
 
 Hallazgos críticos:
 
-1. El ID entregado para Login (`1048230264232330`) no coincide con la app accesible y seleccionada en Meta, cuyo ID es `1048232064232330`. No debe modificarse ningún secreto o variable hasta que el owner confirme cuál es el ID contractual.
+1. El App ID real de Login queda confirmado como `1048232064232330` en Meta Developers y en el proveedor Facebook de Supabase. El valor anterior `1048230264232330` era incorrecto y queda solo como antecedente histórico.
 2. La app Login está sin publicar y Meta la declara no elegible para envío: faltan ícono 1024×1024, Privacy URL, Data Deletion válida y categoría.
 3. En Login, Terms URL y Data Deletion apuntan a `https://www.facebook.com/`; son valores incorrectos.
 4. Login no tiene App Domains ni dominio avanzado, aunque el OAuth de Supabase está correctamente limitado al callback `https://ocmcyhimhndlxlicojrs.supabase.co/auth/v1/callback`.
@@ -20,7 +20,7 @@ Hallazgos críticos:
 7. Business tiene en Administrador de dominios `http://estructuradigital.cl/`, incompatible con el sitio canónico HTTPS.
 8. Business tiene `www.estructuradigital.cl` y el dominio Supabase, pero no el dominio raíz `estructuradigital.cl` en App Domains.
 9. Las páginas de Meta observadas no exponen una Configuration ID cargada; el repositorio documenta `2608678896249332`, pero no pudo confirmarse directamente en la pantalla por un estado de carga incompleto de Meta.
-10. Business aún muestra como pendientes la configuración de webhooks, registro de número, pago y envío de mensaje. Esto contradice documentación previa que marcaba webhook/Embedded Signup como completados.
+10. Business muestra tareas de onboarding para webhook, número, pago y mensaje. La revalidación confirma callback, verify token y `messages` suscrito; la tarjeta de webhook es un recordatorio visual.
 
 ## Inventario
 
@@ -146,13 +146,13 @@ Estados: **OK**, **Error**, **Riesgo**, **Pendiente**, **N/A**, **No verificable
 | 87 | Allowed mutation origins | raíz + www | raíz + www | OK |
 | 88 | Localhost en producción | No | No | OK |
 | 89 | Webhook callback repo | N/A | `/api/meta/webhook` | OK |
-| 90 | Webhook callback Meta | User vacío | UI indica pendiente | Error/Pendiente |
+| 90 | Webhook callback Meta | User vacío | `https://estructuradigital.cl/api/meta/webhook` | OK Business |
 | 91 | Verify token repo | N/A | `META_VERIFY_TOKEN` | OK |
-| 92 | Verify token Meta | Vacío | No visible/pendiente | No verificable |
+| 92 | Verify token Meta | Vacío | Configurado y enmascarado | OK Business |
 | 93 | Webhook signature | N/A | X-Hub-Signature-256 | OK código |
 | 94 | Webhook secret correcto | N/A | Business secret | OK código |
 | 95 | Webhook object | User innecesario | WhatsApp Business Account esperado | Login sobra superficie |
-| 96 | Webhook fields | Ninguno | `messages` esperado | Meta no confirmó suscripción |
+| 96 | Webhook fields | Ninguno | `messages` suscrito v26.0 | OK Business |
 | 97 | Webhook response | N/A | Respuesta rápida 200 | OK código |
 | 98 | Webhook idempotencia | N/A | event_key + upsert | OK |
 | 99 | Webhook worker | N/A | Cron diario 03:17 | Riesgo: frecuencia insuficiente para tiempo real/reintentos |
@@ -174,7 +174,7 @@ Estados: **OK**, **Error**, **Riesgo**, **Pendiente**, **N/A**, **No verificable
 | 115 | Otros user permissions | Disponibles, no agregados | N/A | OK |
 | 116 | App Review enviado | No | No | Correcto |
 | 117 | Advanced Access | No necesario para básicos | No aprobado visible | Bloqueo |
-| 118 | Business Verification | Asociada; estado no confirmado | Pendiente según docs previos | No modificar |
+| 118 | Business Verification | Portfolio asociado | En revisión; información enviada | Depende de Meta; no modificar |
 | 119 | Technology Provider | N/A | Bloqueado según docs previos | Pendiente |
 | 120 | Embedded Signup Config ID | N/A | Repo: `2608678896249332` | No verificado en Meta |
 | 121 | Config ID usa Business App | N/A | Sí en código | OK |
@@ -202,7 +202,7 @@ Estados: **OK**, **Error**, **Riesgo**, **Pendiente**, **N/A**, **No verificable
 | 143 | Usuarios innecesarios | Ninguno visible | Ninguno visible | No concluyente por BM |
 | 144 | Producción Facebook Login | No validada end-to-end | N/A | Bloqueada por app sin publicar |
 | 145 | Producción Supabase OAuth | Callback coherente | N/A | Configuración compatible; prueba real no ejecutada |
-| 146 | Producción webhooks | N/A | Código compatible | Meta indica pendiente; no confirmado |
+| 146 | Producción webhooks | N/A | Callback, token y `messages` confirmados | OK configuración; falta evento real |
 | 147 | Producción Embedded Signup | N/A | Código preparado | Bloqueado por Meta/aprobaciones |
 | 148 | Códigos y textos UTF-8 | Mojibake visible en archivos | Mojibake visible | Error de calidad, no corregido por cambios ajenos |
 | 149 | URLs legales duplicadas | `/privacy` y `/privacidad` | `/terms` y `/terminos` | Riesgo de consistencia; elegir canónicas |
@@ -222,11 +222,11 @@ Estados: **OK**, **Error**, **Riesgo**, **Pendiente**, **N/A**, **No verificable
 
 ### Críticos
 
-- ID Login inconsistente entre orden y Meta.
+- El ID Login vigente está confirmado; el ID transpuesto anterior queda solo como antecedente histórico.
 - Metadatos legales inválidos o ausentes en Login.
 - App Domains ausentes para el dominio raíz.
 - Advanced Access no aprobado para WhatsApp.
-- Webhook y Embedded Signup no confirmados directamente por Meta.
+- Configuration ID de Embedded Signup todavía requiere contraste final antes del onboarding real.
 
 ### Altos
 
@@ -235,7 +235,7 @@ Estados: **OK**, **Error**, **Riesgo**, **Pendiente**, **N/A**, **No verificable
 - “Requerir clave secreta de la app/App Secret Proof” desactivado.
 - Documentación interna afirma estados más avanzados que la consola real.
 - Endpoint de desautorización Login apunta a una página de login, no a un procesador de revocación.
-- El endpoint compartido de Data Deletion prueba ambos secretos, exige una �nica coincidencia y registra `app_type`; mantener pruebas de regresi�n para este contrato.
+- El endpoint compartido de Data Deletion prueba ambos secretos, exige una única coincidencia y registra `app_type`; mantener pruebas de regresión para este contrato.
 
 ### Medios
 
@@ -291,13 +291,13 @@ El único cambio local de esta auditoría es este documento.
 3. Auditar personas con acceso desde Business Settings, no solo Roles de la app.
 4. Activar 2FA para cambios de configuración mediante decisión del owner.
 5. Resolver dominio HTTP heredado con respaldo.
-6. Confirmar Configuration ID y webhook real.
+6. Confirmar Configuration ID y ejecutar un evento webhook real con número conectado.
 7. Completar las aprobaciones de Meta sin publicar.
 8. Crear posteriormente activos y cuenta de revisión controlados; no usar clientes reales.
 
 ## Checklist final de producción
 
-- [ ] App ID Login confirmado por el owner.
+- [x] App ID Login confirmado en Meta y Supabase.
 - [ ] Variables de producción coinciden con ambos IDs confirmados.
 - [ ] Login tiene ícono 1024×1024, categoría y URLs legales propias.
 - [ ] Login tiene App Domains raíz y www.
@@ -308,8 +308,8 @@ El único cambio local de esta auditoría es este documento.
 - [ ] Business no se usa como OAuth de usuarios.
 - [ ] Dominio HTTP heredado eliminado/reemplazado con respaldo.
 - [ ] Configuration ID confirmado en Meta y Vercel.
-- [ ] Webhook callback y verify token confirmados en Meta.
-- [ ] Suscripción `messages` confirmada.
+- [x] Webhook callback y verify token confirmados en Meta.
+- [x] Suscripción `messages` v26.0 confirmada.
 - [ ] Handshake GET confirmado contra producción.
 - [ ] Firma POST confirmada con evento real.
 - [ ] WABA/Phone/Business pertenecen al mismo onboarding.
@@ -330,8 +330,18 @@ El único cambio local de esta auditoría es este documento.
 
 - Facebook Login: **configuración OAuth compatible, no validado end-to-end**. La app está sin publicar y tiene bloqueos de metadatos.
 - Supabase OAuth: **callback exacto confirmado**, pero no se ejecutó una autenticación real durante la auditoría.
-- Webhooks: **implementación local sólida, estado Meta no confirmado**; la UI de Meta aún lo muestra como tarea pendiente.
+- Webhooks: **callback, verify token y suscripción `messages` v26.0 confirmados en Meta**; la tarjeta pendiente es un recordatorio del onboarding. Falta una prueba real con número conectado.
 - Embedded Signup: **código preparado, Configuration ID documentada pero no confirmada en la consola**.
 - Regresión: no se modificó ninguna configuración externa ni código de runtime, por lo que la auditoría no empeoró el estado previo.
 
 Conclusión: no hacer commit/push como “producción lista”. El documento puede commitearse como evidencia de auditoría una vez que las validaciones locales pasen; la publicación y las correcciones Meta continúan bloqueadas.
+
+## Revalidación de producción — 2026-07-30
+
+- App Login confirmada en Meta y Supabase: `1048232064232330`.
+- App Business confirmada en Meta: `2487731658317049`.
+- Supabase tiene Facebook habilitado, el Client ID correcto y callback `https://ocmcyhimhndlxlicojrs.supabase.co/auth/v1/callback`.
+- Business Verification figura **En revisión**; Meta confirma que la información fue enviada.
+- Webhook Business: callback productivo presente, verify token configurado/enmascarado y campo `messages` **Suscritos** en v26.0. La tarjeta de tarea es un recordatorio visual, no evidencia de fallo.
+- Vercel: el proyecto local enlazado `estruct` (`prj_791LY1sMQRo2cR4ZFYhBDFjO9HA8`) no lista variables. Esto contradice documentación previa y bloquea declarar producción lista hasta confirmar el proyecto/entorno correcto.
+- Checklist ejecutable: `docs/meta-production-checklist.md`.
