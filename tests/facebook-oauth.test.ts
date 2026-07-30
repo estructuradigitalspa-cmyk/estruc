@@ -14,7 +14,16 @@ describe("Facebook OAuth de producción", () => {
     expect(login).toContain('provider: "facebook"');
     expect(login).toContain("/auth/callback?next=${encodeURIComponent(safeInternalPath(next))}");
     expect(signup).toContain("config_id");
-    expect(signup).toContain('response_type:"code"');
-    expect(signup).toContain("override_default_response_type:true");
+    expect(signup).toContain('response_type: "code"');
+    expect(signup).toContain("override_default_response_type: true");
+  });
+
+  it("recupera la interfaz si Meta cancela, falla o no responde", () => {
+    const signup = fs.readFileSync("components/app-shell/meta-embedded-signup.tsx", "utf8");
+    expect(signup).toContain("META_AUTHORIZATION_TIMEOUT_MS");
+    expect(signup).toContain("clearAuthorizationTimeout");
+    expect(signup).toContain("fue cerrada");
+    expect(signup).toContain('setStatus("not_connected")');
+    expect(signup).toContain("catch {");
   });
 });
