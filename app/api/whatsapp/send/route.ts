@@ -95,7 +95,7 @@ export async function POST(request: Request) {
       .select("id")
       .single();
     if (conversation) {
-      await supabase.from("messages").upsert(
+      await supabase.from("messages").insert(
         {
           organization_id: organizationId,
           conversation_id: conversation.id,
@@ -108,7 +108,6 @@ export async function POST(request: Request) {
           contact_external_id: parsed.data.to,
           sent_at: new Date().toISOString(),
         },
-        { onConflict: "external_id" },
       );
     }
   }

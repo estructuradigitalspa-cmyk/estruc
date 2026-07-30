@@ -81,7 +81,7 @@ async function persistEvent(item: WhatsAppWebhookItem) {
         .select("id")
         .single();
       if (conversation) {
-        await supabase.from("messages").upsert(
+        await supabase.from("messages").insert(
           {
             organization_id: organizationId,
             conversation_id: conversation.id,
@@ -94,7 +94,6 @@ async function persistEvent(item: WhatsAppWebhookItem) {
             contact_external_id: item.contactId,
             created_at: item.timestamp,
           },
-          { onConflict: "external_id", ignoreDuplicates: true },
         );
       }
     }
