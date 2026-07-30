@@ -67,7 +67,7 @@ export function MetaEmbeddedSignup({ appId, configId, graphVersion }: { appId?: 
       setMessage(body.error || "WhatsApp conectado y validado.");
     } catch {
       setStatus("error");
-      setMessage("Se perdiÃ³ la comunicaciÃ³n al completar la conexiÃ³n. Puedes reintentar.");
+      setMessage("Se perdió la comunicación al completar la conexión. Puedes reintentar.");
     } finally {
       finishingRef.current = false;
     }
@@ -80,13 +80,13 @@ export function MetaEmbeddedSignup({ appId, configId, graphVersion }: { appId?: 
       if (parsed.kind === "cancel") {
         resetAttempt();
         setStatus("not_connected");
-        setMessage("La conexiÃ³n fue cancelada. Puedes intentarlo nuevamente.");
+        setMessage("La conexión fue cancelada. Puedes intentarlo nuevamente.");
         return;
       }
       if (parsed.kind === "error") {
         resetAttempt();
         setStatus("error");
-        setMessage("Meta informÃ³ un error durante la conexiÃ³n. Revisa el diÃ¡logo e intÃ©ntalo nuevamente.");
+        setMessage("Meta informó un error durante la conexión. Revisa el diálogo e inténtalo nuevamente.");
         return;
       }
       assetsRef.current = parsed.assets;
@@ -112,7 +112,7 @@ export function MetaEmbeddedSignup({ appId, configId, graphVersion }: { appId?: 
     resetAttempt();
     const attempt = ++attemptRef.current;
     setStatus("connecting");
-    setMessage("Esperando autorizaciÃ³n de Metaâ€¦");
+    setMessage("Esperando autorización de Meta…");
 
     try {
       const sessionResponse = await fetch("/api/meta/embedded-signup/session", { cache: "no-store" });
@@ -123,7 +123,7 @@ export function MetaEmbeddedSignup({ appId, configId, graphVersion }: { appId?: 
         if (attemptRef.current !== attempt || finishingRef.current) return;
         resetAttempt();
         setStatus("not_connected");
-        setMessage("La ventana de Meta no respondiÃ³ o fue cerrada. Puedes intentarlo nuevamente.");
+        setMessage("La ventana de Meta no respondió o fue cerrada. Puedes intentarlo nuevamente.");
       }, META_AUTHORIZATION_TIMEOUT_MS);
 
       window.FB.login((response) => {
@@ -132,7 +132,7 @@ export function MetaEmbeddedSignup({ appId, configId, graphVersion }: { appId?: 
         if (!code) {
           resetAttempt();
           setStatus("not_connected");
-          setMessage("La autorizaciÃ³n fue cancelada o no se completÃ³. Puedes intentarlo nuevamente.");
+          setMessage("La autorización fue cancelada o no se completó. Puedes intentarlo nuevamente.");
           return;
         }
         codeRef.current = code;
@@ -146,7 +146,7 @@ export function MetaEmbeddedSignup({ appId, configId, graphVersion }: { appId?: 
     } catch {
       resetAttempt();
       setStatus("error");
-      setMessage("No fue posible abrir una sesiÃ³n segura con Meta. Puedes reintentar.");
+      setMessage("No fue posible abrir una sesión segura con Meta. Puedes reintentar.");
     }
   }
 
@@ -154,8 +154,8 @@ export function MetaEmbeddedSignup({ appId, configId, graphVersion }: { appId?: 
     <Script src="https://connect.facebook.net/es_LA/sdk.js" strategy="afterInteractive" onLoad={initialize}/>
     <h2>Conectar cuenta empresarial</h2>
     <p>Autoriza tus activos mediante WhatsApp Embedded Signup de Meta. Los tokens nunca llegan al navegador.</p>
-    <button id="meta-embedded-connect" className="button button-primary" type="button" onClick={connect} disabled={!configured || !ready || status === "connecting"}>{status === "connecting" ? "Conectandoâ€¦" : "Conectar con Facebook"}</button>
-    {!configured && <p className="form-status">La configuraciÃ³n empresarial de Meta no estÃ¡ activa.</p>}
+    <button id="meta-embedded-connect" className="button button-primary" type="button" onClick={connect} disabled={!configured || !ready || status === "connecting"}>{status === "connecting" ? "Conectando…" : "Conectar con Facebook"}</button>
+    {!configured && <p className="form-status">La configuración empresarial de Meta no está activa.</p>}
     {message && <p className="form-status" aria-live="polite">{message}</p>}
     <p className="form-status">Estado: <strong>{status}</strong></p>
   </section>;
