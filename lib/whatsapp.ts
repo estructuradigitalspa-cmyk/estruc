@@ -1,9 +1,21 @@
 import { z } from "zod";
 
-export const whatsappSendSchema = z.object({
-  to: z.string().regex(/^\d{8,15}$/, "Usa el número en formato internacional, solo dígitos."),
-  message: z.string().trim().min(1).max(4096),
-});
+const whatsappRecipientSchema = z.string().regex(/^\d{8,15}$/, "Usa el número en formato internacional, solo dígitos.");
+
+export const whatsappSendSchema = z.union([
+  z.object({
+    type: z.literal("text").optional().default("text"),
+    to: whatsappRecipientSchema,
+    message: z.string().trim().min(1).max(4096),
+  }),
+  z.object({
+    type: z.literal("template"),
+    to: whatsappRecipientSchema,
+    templateName: z.literal("confirmacion_solicitud"),
+    languageCode: z.literal("es"),
+    parameters: z.tuple([z.string().trim().min(1).max(80), z.string().trim().min(1).max(120)]),
+  }),
+]);
 
 export type WhatsAppWebhookItem = {
   kind: "message" | "status";

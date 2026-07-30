@@ -23,3 +23,50 @@ El script no muestra tokens ni plaintext. Antes de reemplazar cada ciphertext cr
 - No eliminar respaldos ni claves antiguas hasta que el propietario apruebe el cierre de la ventana de rollback.
 
 La rotación real no forma parte de la implementación automática: requiere una clave v2 configurada, respaldo confirmado y autorización explícita.
+## Comandos verificados
+
+Ejecutar desde la raíz y autenticarse con la CLI sin escribir tokens en la línea de comandos:
+
+```powershell
+npx --yes supabase@latest login
+npx --yes supabase@latest link --project-ref ocmcyhimhndlxlicojrs
+New-Item -ItemType Directory -Force -Path C:\tmp\estructura-supabase-backup
+npx --yes supabase@latest db dump --linked --schema public,auth --file C:\tmp\estructura-supabase-backup\pre-aes-v2.sql
+npx --yes supabase@latest db push --linked --dry-run
+```
+
+Después de revisar el respaldo y el dry-run, aplicar únicamente con autorización:
+
+```powershell
+npx --yes supabase@latest db push --linked
+node .\tools\rotate-meta-token-credentials.mjs --limit=100
+```
+
+El primer llamado del script es dry-run. La rotación real exige que las variables se inyecten desde un entorno seguro y una confirmación explícita; no pegarlas en el historial del shell:
+
+```powershell
+node .\tools\rotate-meta-token-credentials.mjs --apply --limit=100
+```
+
+Antes de `--apply`, el entorno seguro debe contener `META_ROTATION_CONFIRM=rotate-to-v2`. Verificación posterior:
+
+```powershell
+node .\tools\rotate-meta-token-credentials.mjs --limit=100
+npm test -- --run tests/meta-token-versioning.test.ts tests/credential-rotation-contract.test.ts
+```
+
+Los errores 429/5xx/red se reintentan hasta tres veces. Un conflicto compare-and-swap se informa como `concurrent_skip`; se debe investigar y repetir en una rotación nueva para que exista un respaldo consistente.
+
+Rollback SQL, solo con autorización y el `rotation_id` confirmado:
+
+```sql
+begin;
+update public.integration_accounts as account
+set encrypted_credentials = backup.encrypted_credentials
+from public.credential_rotation_backups as backup
+where backup.rotation_id = '<ROTATION_ID>'::uuid
+  and backup.integration_account_id = account.id;
+commit;
+```
+
+El rollback estructural está en `supabase/rollbacks/202607300005_credential_rotation.rollback.sql` y solo puede aplicarse cuando no se necesite ningún respaldo de rotación.

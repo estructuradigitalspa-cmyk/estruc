@@ -19,10 +19,12 @@ insert into public.contacts(id,organization_id,name) values('aaaaaaaa-1000-4000-
 insert into public.conversations(id,organization_id,contact_id,channel,external_id) values('aaaaaaaa-1100-4000-8000-000000000001','aaaaaaaa-0000-4000-8000-000000000001','aaaaaaaa-1000-4000-8000-000000000001','whatsapp','conv-a'),('bbbbbbbb-1100-4000-8000-000000000001','bbbbbbbb-0000-4000-8000-000000000001','bbbbbbbb-1000-4000-8000-000000000001','whatsapp','conv-b');
 insert into public.messages(id,organization_id,conversation_id,external_id,direction,body) values('aaaaaaaa-1200-4000-8000-000000000001','aaaaaaaa-0000-4000-8000-000000000001','aaaaaaaa-1100-4000-8000-000000000001','msg-a','inbound','A'),('bbbbbbbb-1200-4000-8000-000000000001','bbbbbbbb-0000-4000-8000-000000000001','bbbbbbbb-1100-4000-8000-000000000001','msg-b','inbound','B');insert into public.integrations(id,organization_id,provider,status) values('aaaaaaaa-2000-4000-8000-000000000001','aaaaaaaa-0000-4000-8000-000000000001','whatsapp','connected'),('bbbbbbbb-2000-4000-8000-000000000001','bbbbbbbb-0000-4000-8000-000000000001','whatsapp','connected');
 insert into public.integration_accounts(organization_id,integration_id,external_id,waba_id,phone_number_id,encrypted_credentials) values('aaaaaaaa-0000-4000-8000-000000000001','aaaaaaaa-2000-4000-8000-000000000001','phone-a','30001','40001','cipher-a'),('bbbbbbbb-0000-4000-8000-000000000001','bbbbbbbb-2000-4000-8000-000000000001','phone-b','30002','40002','cipher-b');
+insert into public.whatsapp_message_templates(organization_id,name,language_code,category,status) values('aaaaaaaa-0000-4000-8000-000000000001','confirmacion_solicitud','es','UTILITY','draft'),('bbbbbbbb-0000-4000-8000-000000000001','confirmacion_solicitud','es','UTILITY','draft');
 set local role authenticated;
 set local request.jwt.claims='{"sub":"10000000-0000-4000-8000-000000000001","email":"owner-a@test.invalid","role":"authenticated"}';
 select pg_temp.assert_true((select count(*)=1 from public.integration_accounts_safe),'Owner A only reads its integration account');
 select pg_temp.assert_true(not exists(select 1 from public.integration_accounts_safe where organization_id='bbbbbbbb-0000-4000-8000-000000000001'),'Owner A cannot read B integration');
+select pg_temp.assert_true((select count(*)=1 from public.whatsapp_message_templates),'Owner A only reads its templates');
 do $$begin begin perform encrypted_credentials from public.integration_accounts;raise exception 'ASSERTION FAILED: ciphertext was readable';exception when insufficient_privilege then null;end;end$$;
 reset role;set local role authenticated;
 set local request.jwt.claims='{"sub":"10000000-0000-4000-8000-000000000003","email":"agent-a@test.invalid","role":"authenticated"}';
@@ -31,6 +33,7 @@ select pg_temp.assert_true(not exists(select 1 from public.contacts where organi
 select pg_temp.assert_true((select count(*)=1 from public.messages),'Agent A only reads A messages');
 select pg_temp.assert_true(not exists(select 1 from public.messages where organization_id='bbbbbbbb-0000-4000-8000-000000000001'),'Agent A cannot read B messages');
 select pg_temp.assert_true(not exists(select 1 from public.integrations),'Agent cannot read integrations');
+select pg_temp.assert_true(not exists(select 1 from public.whatsapp_message_templates),'Agent cannot read or enumerate templates');
 do $$begin begin perform encrypted_credentials from public.integration_accounts;raise exception 'ASSERTION FAILED: ciphertext was readable';exception when insufficient_privilege then null;end;end$$;
 reset role;set local role authenticated;
 set local request.jwt.claims='{"sub":"10000000-0000-4000-8000-000000000004","email":"viewer-a@test.invalid","role":"authenticated"}';

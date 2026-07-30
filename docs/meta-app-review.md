@@ -1,4 +1,4 @@
-﻿# Arquitectura para Meta App Review
+# Arquitectura para Meta App Review
 
 Estado: preparación técnica. Ningún permiso está aprobado ni solicitado todavía.
 
@@ -43,3 +43,21 @@ Estado: preparación técnica. Ningún permiso está aprobado ni solicitado toda
 - [ ] Política de privacidad revisada profesionalmente.
 - [ ] Eliminación y revocación verificadas.
 - [ ] Solicitar solo permisos estrictamente necesarios.
+## Cuenta y activos de revisión
+
+No incluir credenciales en el repositorio. Crear antes de enviar la revisión:
+
+- Usuario temporal exclusivo para Meta Review.
+- Organización ficticia `Estructura Digital Review`.
+- Rol Owner limitado a esa organización.
+- WABA y número de prueba controlados por Estructura Digital.
+- Destinatario autorizado y procedimiento de 2FA coordinado.
+- Fecha de expiración y responsable de revocar la cuenta tras la revisión.
+
+## Demostración de mensajería
+
+Usar la plantilla Utility `confirmacion_solicitud`, idioma `es`, con ejemplos no personales. Mostrar el request desde el tenant de revisión, la respuesta sanitizada y los estados webhook `sent`, `delivered`, `read`; mostrar un mensaje entrante y luego desconectar.
+
+URLs: `https://estructuradigital.cl`, `/iniciar-sesion`, `/privacidad`, `/terminos`, `/eliminacion-de-datos`.
+
+No enviar el paquete hasta que la Business Verification termine, el número de prueba esté registrado y la plantilla esté aprobada.

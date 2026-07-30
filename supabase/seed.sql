@@ -1,2 +1,2 @@
-﻿-- Optional seed intentionally contains no fictitious business data.
+-- Optional seed intentionally contains no fictitious business data.
 -- Create real users through Supabase Auth and organizations through the onboarding flow.

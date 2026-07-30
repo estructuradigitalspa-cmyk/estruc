@@ -5,6 +5,7 @@ import { getOrganizationWhatsAppConfig } from "@/lib/whatsapp-organization-confi
 import { consumeRateLimit } from "@/lib/rate-limit";
 import { csrfError, validateMutationOrigin } from "@/lib/request-security";
 import { operationalLog } from "@/lib/structured-log";
+import { buildWhatsAppTemplatePayload, renderWhatsAppTemplateBody } from "@/lib/whatsapp-template";
 
 export async function POST(request: Request) {
   if (!validateMutationOrigin(request)) return csrfError();
@@ -35,13 +36,17 @@ export async function POST(request: Request) {
         Authorization: `Bearer ${config.accessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        messaging_product: "whatsapp",
-        recipient_type: "individual",
-        to: parsed.data.to,
-        type: "text",
-        text: { preview_url: false, body: parsed.data.message },
-      }),
+      body: JSON.stringify(
+        parsed.data.type === "template"
+          ? buildWhatsAppTemplatePayload(parsed.data)
+          : {
+              messaging_product: "whatsapp",
+              recipient_type: "individual",
+              to: parsed.data.to,
+              type: "text",
+              text: { preview_url: false, body: parsed.data.message },
+            },
+      ),
       cache: "no-store",
     },
   );
@@ -59,25 +64,6 @@ export async function POST(request: Request) {
 
   const externalId = graphResult.messages[0].id;
   const { supabase, organizationId } = context;
-  const { data: integration } = await supabase
-    .from("integrations")
-    .upsert(
-      { organization_id: organizationId, provider: "whatsapp", status: "test", config: { mode: "test" } },
-      { onConflict: "organization_id,provider" },
-    )
-    .select("id")
-    .single();
-  if (integration) {
-    await supabase.from("integration_accounts").upsert(
-      {
-        organization_id: organizationId,
-        integration_id: integration.id,
-        external_id: config.phoneNumberId,
-        display_name: "WhatsApp test number",
-      },
-      { onConflict: "integration_id,external_id" },
-    );
-  }
   const { data: contact } = await supabase
     .from("contacts")
     .upsert(
@@ -109,7 +95,7 @@ export async function POST(request: Request) {
           conversation_id: conversation.id,
           external_id: externalId,
           direction: "outbound",
-          body: parsed.data.message,
+          body: parsed.data.type === "template" ? renderWhatsAppTemplateBody(parsed.data) : parsed.data.message,
           status: "sent",
           waba_id: config.wabaId,
           phone_number_id: config.phoneNumberId,

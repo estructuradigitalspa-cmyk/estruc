@@ -1,141 +1,86 @@
 # Informe técnico final de producción — Estructura Digital SaaS
 
-Fecha: 2026-07-30
-Proyecto: `estructuradigitalspa-cmyks-projects/estruct`
-Dominio: `https://estructuradigital.cl`
-Supabase: `ocmcyhimhndlxlicojrs`
-Commit verificado: `8e5ec1897c03f4926a7d5d24a19aa93f3b5f947d`
-
-> Helplis no forma parte de este proyecto ni de este informe.
+Fecha de corte: 2026-07-30
 
 ## Estado ejecutivo
 
-La aplicación, la base y la configuración automatizable de Meta quedaron endurecidas y desplegadas. La migración productiva se aplicó con respaldo previo. El webhook de Meta quedó enlazado al dominio canónico y su handshake respondió HTTP 200. OAuth fue probado hasta la pantalla de consentimiento de Facebook; aceptar permisos, seleccionar activos y verificar la sesión de un usuario real requieren intervención humana.
+El proyecto canónico es `estructuradigitalspa-cmyks-projects/estruct`. Vercel muestra `estructuradigital.cl` y `www.estructuradigital.cl` asociados a Production; `www` tiene configuración válida y el apex funciona con el registro A legacy admitido por Vercel, aunque recomienda migrarlo al CNAME nuevo. No se tocó Business Verification, no se publicó la app, no se registró un número, no se agregó un medio de pago y no se envió ninguna plantilla.
 
-## Arquitectura final
+## Arquitectura
 
-```mermaid
-flowchart LR
-  U["Usuario"] --> V["Next.js 16 / Vercel"]
-  V --> A["Supabase Auth"]
-  V --> D["Postgres + RLS"]
-  V --> G["Meta Graph API"]
-  G --> H["Webhook firmado"]
-  H --> Q["webhook_events"]
-  Q --> W["Worker + reintentos"]
-  V --> C["AES-256-GCM"]
-  C --> D
-```
+Next.js 16 en Vercel usa Supabase Auth/Postgres. La sesión y organización activa limitan cada operación; RLS y roles Owner/Admin/Agent/Viewer refuerzan el aislamiento. Facebook Login se configura en Supabase con la app Login. WhatsApp usa la app Business, Embedded Signup, Graph API y webhook firmado. Tokens Meta se cifran con AES-256-GCM versionado.
 
-La organización activa se conserva en cookie HttpOnly, Secure y SameSite=Lax y se valida contra `organization_members`. Service role, secretos Meta y clave AES son exclusivos del servidor.
+## Variables utilizadas — solo nombres
 
-## Endpoints
+`NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `META_LOGIN_APP_ID`, `META_LOGIN_APP_SECRET`, `META_BUSINESS_APP_ID`, `META_BUSINESS_APP_SECRET`, `META_BUSINESS_CONFIG_ID`, `META_GRAPH_API_VERSION`, `META_VERIFY_TOKEN`, `META_OAUTH_STATE_SECRET`, `META_TOKEN_ENCRYPTION_KEY_V1`, `META_TOKEN_ENCRYPTION_KEY_V2`, `META_TOKEN_ENCRYPTION_ACTIVE_VERSION`, `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, `CONTACT_TO_EMAIL`, `CONTACT_REPLY_TO_EMAIL`, `CRON_SECRET`, `WEBHOOK_WORKER_BATCH_SIZE` y `RATE_LIMIT_*`.
 
-| Método | Ruta | Control |
-|---|---|---|
-| POST | `/api/contact` | Schema, honeypot, rate limit/IP |
-| GET/POST | `/api/meta/embedded-signup/session` | Auth, Owner/Admin, state, cookie, nonce, CSRF |
-| GET | `/api/meta/oauth/start` | Auth, rol, state firmado |
-| GET | `/api/meta/oauth/callback` | State/cookie |
-| GET/POST | `/api/meta/webhook` | Verify token / HMAC SHA-256 |
-| POST | `/api/meta/data-deletion` | signed_request y rate limit |
-| GET | `/data-deletion/status/[code]` | Código opaco, respuesta mínima |
-| POST | `/api/meta/disconnect`, `/api/meta/revalidate` | Auth, rol, CSRF, rate limit |
-| POST | `/api/whatsapp/send` | Auth, rol, CSRF, límites usuario/organización |
-| GET | `/api/whatsapp/status` | Auth y organización |
-| GET | `/api/internal/webhook-worker` | Bearer `CRON_SECRET` |
-| POST/PATCH/DELETE | `/api/organization/invitations`, `/api/organization/members` | Auth, rol, CSRF, RPC |
-| GET | `/auth/callback` | PKCE Supabase |
+Variables heredadas, solo durante transición: `META_APP_ID`, `META_APP_SECRET`, `META_CONFIG_ID`, `META_TOKEN_ENCRYPTION_KEY`. El fallback global WhatsApp está bloqueado en producción por código.
 
-## Variables — solo nombres
+## Estado de infraestructura
 
-`NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `META_LOGIN_APP_ID`, `META_LOGIN_APP_SECRET`, `META_BUSINESS_APP_ID`, `META_BUSINESS_APP_SECRET`, `META_BUSINESS_CONFIG_ID`, `META_GRAPH_API_VERSION`, `META_VERIFY_TOKEN`, `META_OAUTH_STATE_SECRET`, `META_TOKEN_ENCRYPTION_KEY_V1`, `META_TOKEN_ENCRYPTION_KEY_V2`, `META_TOKEN_ENCRYPTION_ACTIVE_VERSION`, `META_PHONE_NUMBER_ID`, `META_ACCESS_TOKEN`, `META_WABA_ID`, `ENABLE_GLOBAL_WHATSAPP_FALLBACK`, `RATE_LIMIT_CONTACT`, `RATE_LIMIT_WHATSAPP_USER`, `RATE_LIMIT_WHATSAPP_ORG`, `RATE_LIMIT_META_ATTEMPTS`, `RATE_LIMIT_DATA_DELETION`, `RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, `CONTACT_TO_EMAIL`, `CRON_SECRET`, `WEBHOOK_WORKER_BATCH_SIZE`.
+- Team correcto comprobado en Vercel: `estructuradigitalspa-cmyks-projects`.
+- Proyecto correcto: `estruct`.
+- Se detectó un segundo proyecto `estruc`; no tiene el dominio canónico.
+- El Vercel CLI local está autenticado en otra cuenta/equipo y no debe utilizarse para desplegar este proyecto hasta cambiar su sesión.
+- El deployment del commit `e0e6fa6` aparece en el proyecto correcto y el dominio canónico está asociado a él.
+- DNS Cloudflare: apex `A 76.76.21.21`, DNS only, TTL Auto; `www CNAME 01d0cd82ae83a0c8.vercel-dns-017.com`, DNS only, TTL Auto.
+- Vercel confirma que el A legacy sigue funcionando; recomienda apex `CNAME 01d0cd82ae83a0c8.vercel-dns-017.com`, DNS only. No se cambió automáticamente porque Cloudflare exige reemplazar el registro productivo y no era necesario para disponibilidad.
 
-En Vercel Production se confirmó que las variables Supabase sensibles están configuradas y no vacías. No se imprimieron ni guardaron valores.
+## Separación Meta
 
-## OAuth, Embedded Signup y WhatsApp
+El código concentra el fallback heredado en `lib/meta-env.ts`. OAuth/Embedded Signup/Graph/webhook usan helpers Business. Facebook Login es administrado por Supabase con las credenciales de la app Login; `META_LOGIN_APP_SECRET` se usa adicionalmente para validar solicitudes de eliminación de esa app.
 
-OAuth: SaaS → Supabase → Facebook → `https://ocmcyhimhndlxlicojrs.supabase.co/auth/v1/callback` → Supabase → `https://estructuradigital.cl/auth/callback` → sesión.
+En Vercel Production se agregaron los tres identificadores no secretos separados. Faltan `META_LOGIN_APP_SECRET` y `META_BUSINESS_APP_SECRET`. No se retiraron variables heredadas.
 
-Supabase URL Configuration:
-- Site URL: `https://estructuradigital.cl`
-- Redirect: `https://estructuradigital.cl/auth/callback`
-- Desarrollo: `http://localhost:3000/auth/callback`
+## Resend
 
-Embedded Signup usa el SDK oficial, state HMAC, cookie segura y nonce de un uso. El servidor valida usuario, rol y organización; canjea el código; valida Business/WABA/número; suscribe WABA; cifra el token y hace upsert multiempresa.
+El panel requiere login y Vercel no contiene `RESEND_API_KEY`. From esperado: `Estructura Digital <contacto@estructuradigital.cl>`. Contacto usa Reply-To del visitante; invitaciones usan `CONTACT_REPLY_TO_EMAIL`. Sin key, ambos flujos fallan cerrado y no afirman entrega. Los valores DNS deben copiarse literalmente desde Resend después del login; ver `docs/resend-production.md`.
 
-WhatsApp usa la credencial cifrada de la organización activa. El webhook minimiza y persiste idempotentemente; el worker reclama atómicamente, reintenta exponencialmente y deriva a dead-letter.
+## AES v2
 
-Webhook: `https://estructuradigital.cl/api/meta/webhook`. Campo `messages` suscrito en v26.0.
+Código compatible con ciphertext v1/v2, versión activa configurable, backup tenant-account, compare-and-swap, reintentos transitorios y dry-run por defecto. La migración `202607300005_credential_rotation.sql` y su rollback están preparados, no aplicados. No existe clave v2 productiva y no se rotaron credenciales.
 
-## Tablas y RLS
+## WhatsApp
 
-Tablas: `profiles`, `organizations`, `organization_members`, `organization_invitations`, `contacts`, `conversations`, `messages`, `pipelines`, `pipeline_stages`, `deals`, `tasks`, `integrations`, `integration_accounts`, `webhook_events`, `audit_logs`, `data_deletion_requests`, `oauth_nonces`, `rate_limit_buckets`.
+La base conserva Business/WABA/Phone Number ID, número visible, nombre verificado, calidad/registro, token cifrado y organización. El envío obtiene exclusivamente la cuenta conectada del tenant. Se corrigió el envío para que no vuelva a marcar una integración conectada como `test`.
 
-RLS limita datos a miembros de la organización y escritura por rol. Integraciones, cuentas, miembros y auditoría requieren Owner/Admin. `encrypted_credentials` no se concede a `authenticated`; la vista segura lo excluye. Nonces y rate limits son service-role-only. RPC transaccionales protegen el último Owner.
+La plantilla Utility `confirmacion_solicitud` tiene payload Graph API tipado y probado. La migración `202607300006_whatsapp_templates.sql` prepara catálogo tenant-scoped y no fue aplicada. Procedimientos de número, OTP, pago, plantilla y estados están en `docs/whatsapp-production-onboarding.md`.
 
-## Webhook, cifrado y migración
+## Vulnerabilidades
 
-Firma `X-Hub-Signature-256`; falla cerrado. Tokens AES-256-GCM con IV aleatorio de 96 bits y tag. Logs sanitizados sin secretos, códigos OAuth, signed_request, ciphertext ni payload completo.
+Next.js 16.2.12 es la última versión estable. Su dependencia opcional declara `sharp ^0.34.5`; el lockfile instalaba 0.34.5, afectado por avisos altos. Se probó `sharp 0.35.3` mediante override sin downgrade: `npm ls` resuelve 0.35.3 y `npm audit --omit=dev` informa cero vulnerabilidades. La promoción queda condicionada a la suite completa final.
 
-Respaldo: schema `codex_backup_20260730_0900`, 15 tablas. Preflight: 0 duplicados de integraciones, 0 duplicados de mensajes, 0 organizaciones sin Owner y 0 webhooks pendientes. Migración `202607300004_production_hardening.sql` aplicada. Verificación posterior: 12/12 controles presentes.
+## Validación ejecutada
 
-## Pruebas y cobertura
+- Instalación limpia: `npm ci`, aprobada.
+- Lint: aprobado.
+- Typecheck: aprobado.
+- Tests: 121/121 en 23 archivos.
+- Cobertura: 91.26% statements, 78.98% branches, 83.78% functions y 98.96% lines.
+- Build local Next.js: aprobado, 38 páginas/rutas generadas.
+- `npm audit --omit=dev`: cero vulnerabilidades.
+- Supabase local desde cero: seis migraciones aplicadas.
+- DB lint: sin errores.
+- RLS multiempresa, ciphertext y catálogo de plantillas: aprobado y transacción revertida.
+- Escaneo de secretos: solo fixtures explícitos de prueba; no se agregaron valores reales.
+## Migraciones
 
-- Lint y typecheck: aprobados.
-- Tests: 108/108, 20 archivos.
-- Build: aprobado, 38 rutas.
-- Cobertura: 91.31% statements, 78.73% branches, 98.98% lines.
-- PostgreSQL 17, migraciones desde cero y DB lint: aprobados.
-- RLS multiempresa A/B con Owner/Admin/Agent/Viewer: aprobado.
-- Producción: `/` 200; callback sin código 307; webhook inválido 403; handshake válido 200; worker 401/200; WhatsApp status 401; Embedded Session 401; Data Deletion GET 200.
-- OAuth: Estructura Digital → Facebook con callback Supabase correcto.
-- Headers: HSTS y `nosniff`.
+Preparadas y no aplicadas:
 
-## Auditoría priorizada
+- `202607300005_credential_rotation.sql`.
+- `202607300006_whatsapp_templates.sql`.
 
-### Crítica
+Ambas tienen scripts de rollback manual. No hubo cambios ni borrados en producción.
 
-No se encontraron secretos productivos, service role, claves privadas ni tokens embebidos/versionados. Los patrones de fixtures son datos de prueba.
+## Meta y lanzamiento público
 
-### Alta
+Business Verification permanece en proceso según Meta. Technology Provider, Advanced Access, App Review y publicación siguen bloqueados o pendientes. Se mantienen los permisos mínimos `whatsapp_business_management` y `whatsapp_business_messaging`; `business_management` solo se solicitará si Meta demuestra que es indispensable.
 
-Resueltos: aislamiento multiempresa, RLS excesiva, ciphertext visible, nonce reusable, state divergente, webhook fail-open, rate limiting, fallback global y errores Graph expuestos.
+## Pendientes manuales
 
-Pendiente upstream: dos hallazgos altos transitivos en `sharp@0.34.5` por Next 16.2.12. El fix automático fuerza downgrade incompatible a Next 14 y no se aplicó.
-
-### Media
-
-CSP conserva `'unsafe-inline'`; falta `RESEND_API_KEY`; cron Hobby recupera diariamente; conviene separar `META_LOGIN_APP_*` y `META_BUSINESS_APP_*`.
-
-### Baja
-
-Formalizar rotación versionada de la clave AES y conservar evidencias siempre sanitizadas.
-
-## Checklists
-
-Seguridad:
-- [x] Secretos solo backend/Vercel; tokens cifrados.
-- [x] State, expiración, nonce, CSRF, rate limit y RLS.
-- [x] Webhook firmado/idempotente y worker autenticado.
-- [x] Logs, respuestas y captura sanitizados.
-- [ ] CSP con nonce; resolver Sharp compatible; rotación formal.
-
-Despliegue:
-- [x] Backup, preflight, migración, verificación y rollback preparado.
-- [x] Variables Supabase no vacías y variables de seguridad configuradas.
-- [x] Commit en Production Ready, dominio y endpoints verificados.
-- [x] Webhook Meta actualizado y validado.
-- [ ] Configurar Resend.
-- [ ] Completar consentimiento OAuth y Embedded Signup manual.
-
-## Pendientes para producción pública
-
-1. Completar consentimiento Facebook y confirmar sesión, usuario y organización.
-2. Completar Embedded Signup seleccionando Business, WABA y número.
-3. Probar envío/recepción con número real.
-4. Configurar Resend y probar contacto/invitaciones.
-5. Separar credenciales de apps Login y Business.
-6. Posteriormente: Business Verification, Technology Provider, Advanced Access, App Review y publicación. No se modificaron.
-
-Evidencia: `docs/evidence/meta-webhook-production.png`.
+1. Iniciar sesión en Resend, crear/verificar dominio, crear key mínima y guardarla en Vercel Production.
+2. Copiar de forma segura los secretos separados Login/Business a Vercel y redeploy.
+3. Decidir si reemplazar el A apex legacy por el CNAME recomendado; no es un incidente de disponibilidad.
+4. Esperar la verificación Meta antes de registrar número, agregar pago o enviar plantilla.
+5. Autorizar respaldo, aplicación de migraciones y rotación AES v2.
+6. Crear usuario/activos de prueba y video final cuando Embedded Signup real esté habilitado.

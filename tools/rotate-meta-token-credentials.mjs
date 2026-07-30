@@ -28,9 +28,14 @@ function encrypt(plaintext) {
   return `${active}.${iv.toString('base64url')}.${cipher.getAuthTag().toString('base64url')}.${ciphertext.toString('base64url')}`;
 }
 async function api(path, init={}) {
-  const response=await fetch(`${url}/rest/v1/${path}`,{...init,headers:{apikey:serviceRole,authorization:`Bearer ${serviceRole}`,'content-type':'application/json',prefer:'return=representation',...init.headers}});
-  if(!response.ok) throw new Error(`SUPABASE_${response.status}`);
-  return response.status===204?null:response.json();
+  const maxAttempts=3;
+  for(let attempt=1;attempt<=maxAttempts;attempt++){
+    const response=await fetch(`${url}/rest/v1/${path}`,{...init,headers:{apikey:serviceRole,authorization:`Bearer ${serviceRole}`,'content-type':'application/json',prefer:'return=representation',...init.headers}}).catch(()=>null);
+    if(response?.ok) return response.status===204?null:response.json();
+    const retryable=!response||response.status===429||response.status>=500;
+    if(!retryable||attempt===maxAttempts) throw new Error(`SUPABASE_${response?.status||'NETWORK'}`);
+    await new Promise((resolve)=>setTimeout(resolve,250*2**(attempt-1)));
+  }
 }
 const rows=await api(`integration_accounts?select=id,encrypted_credentials&encrypted_credentials=not.is.null&limit=${limit}`);
 const pending=rows.filter((row)=>!String(row.encrypted_credentials).startsWith(`${active}.`));
