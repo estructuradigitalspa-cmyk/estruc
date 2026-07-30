@@ -12,7 +12,8 @@
         "lint": "eslint . --ignore-pattern .next",
         "typecheck": "tsc --noEmit",
         "test": "vitest run",
-        "test:coverage": "vitest run --coverage"
+        "test:coverage": "vitest run --coverage",
+        "env:check": "node tools/verify-production-env.mjs"
     },
     "dependencies": {
         "@supabase/ssr": "^0.12.4",
