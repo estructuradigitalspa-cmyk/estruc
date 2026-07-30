@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getApiContext } from "@/lib/supabase/api-context";
-import { getWhatsAppServerConfig, whatsappSendSchema } from "@/lib/whatsapp";
+import { whatsappSendSchema } from "@/lib/whatsapp";
+import { getOrganizationWhatsAppConfig } from "@/lib/whatsapp-organization-config";
 
 export async function POST(request: Request) {
   const context = await getApiContext();
@@ -14,7 +15,7 @@ export async function POST(request: Request) {
   }
   let config;
   try {
-    config = getWhatsAppServerConfig();
+    config = await getOrganizationWhatsAppConfig(context.organizationId);
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Configuración inválida" }, { status: 503 });
   }
@@ -103,7 +104,7 @@ export async function POST(request: Request) {
           direction: "outbound",
           body: parsed.data.message,
           status: "sent",
-          waba_id: process.env.META_WABA_ID,
+          waba_id: config.wabaId,
           phone_number_id: config.phoneNumberId,
           contact_external_id: parsed.data.to,
           sent_at: new Date().toISOString(),
