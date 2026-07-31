@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
-const allowed=new Set(["https://estructuradigital.cl","https://www.estructuradigital.cl",...(process.env.NODE_ENV==="development"?["http://localhost:3000"]:[])]);
-export function validateMutationOrigin(request:Request){const origin=request.headers.get("origin");const host=request.headers.get("host");if(!origin||!host)return false;try{return allowed.has(origin)&&new URL(origin).host===host}catch{return false}}
+﻿import { NextResponse } from "next/server";
+function allowedOrigins(){const configured=[process.env.NEXT_PUBLIC_SITE_URL,process.env.NEXT_PUBLIC_APP_URL].filter((x):x is string=>Boolean(x));return new Set(["https://estructuradigital.cl","https://www.estructuradigital.cl","https://elytsa.com","https://www.elytsa.com","https://app.elytsa.com","https://staging.elytsa.com","https://elytsa-staging.vercel.app",...configured,...(process.env.NODE_ENV==="development"?["http://localhost:3000"]:[])])}
+export function validateMutationOrigin(request:Request){const origin=request.headers.get("origin"),host=request.headers.get("host");if(!origin||!host)return false;try{return allowedOrigins().has(origin)&&new URL(origin).host===host}catch{return false}}
 export function csrfError(){return NextResponse.json({error:"Origen no permitido"},{status:403})}

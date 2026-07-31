@@ -1,9 +1,16 @@
-# Staging seguro del piloto comercial
+﻿# Staging Elytsa
 
-Staging debe usar un proyecto Supabase independiente, dominio independiente y credenciales exclusivas. Nunca se reutilizan claves, tokens, números ni datos de producción.
+Estado: contrato local listo; servicios externos pendientes.
 
-Variables mínimas: `APP_ENV=staging`, URL/anon/service-role del Supabase de staging y, sólo para probar IA real, `LLM_API_KEY`. `ALLOW_EXTERNAL_MESSAGES` y `ALLOW_REAL_WHATSAPP` permanecen en `false`.
+Staging debe usar Vercel `elytsa-staging`, Supabase `elytsa-staging`, datos sintéticos y proveedor LLM simulado. Variables base están en `.env.staging.example`.
 
-El proveedor real se habilita además por organización. Tener una clave en el entorno no activa llamadas por sí solo. Los presupuestos se evalúan antes de cada run.
+## Supabase
+Crear un proyecto exclusivo, copiar URL/anon/service role a secretos de staging, aplicar migraciones en orden, ejecutar `supabase/seed.sql` o fixtures sintéticos y las pruebas SQL de RLS/aislamiento/concurrencia. Verificar Auth, Storage, RLS y rollback. No crear producción ni cargar clientes reales.
 
-Promoción futura: validar onboarding, conversación, cotización, reserva, handoff, métricas y checklist; rotar credenciales de staging; revisar RLS; crear respaldo; recién entonces preparar un cambio separado para producción.
+## Controles obligatorios
+`ALLOW_EXTERNAL_MESSAGES=false`, `ALLOW_REAL_WHATSAPP=false`, `LLM_PROVIDER=simulated`; noindex/nofollow; cero credenciales de producción; correo no operativo sin Resend; canales externos desconectados.
+
+## Validación
+Ejecutar lint, typecheck, tests, build y auditoría. Completar flujo: onboarding → servicio → empleado inactivo → simulación → cotización → reserva → handoff → métricas. Revisar logs redactados y separación entre dos organizaciones sintéticas.
+
+Responsable: tecnología. Costo: Supabase/Vercel según planes seleccionados. Rollback: restaurar deployment anterior y ejecutar rollback de la última migración sólo tras preflight y respaldo.
