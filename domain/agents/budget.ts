@@ -1,0 +1,3 @@
+export type UsageBudget={monthlyTokenBudget:number;monthlyCostBudget:number;perRunTokenLimit:number;usedTokens:number;usedCost:number};
+export function assertUsageBudget(value:UsageBudget){if(value.usedTokens>=value.monthlyTokenBudget)throw new Error("MONTHLY_TOKEN_BUDGET_EXCEEDED");if(value.usedCost>=value.monthlyCostBudget)throw new Error("MONTHLY_COST_BUDGET_EXCEEDED");if(value.perRunTokenLimit<128)throw new Error("INVALID_RUN_TOKEN_LIMIT")}
+export function estimateLlmCost(inputTokens:number,outputTokens:number){const inputRate=Number(process.env.LLM_INPUT_COST_PER_MILLION||0),outputRate=Number(process.env.LLM_OUTPUT_COST_PER_MILLION||0);return Math.round(((inputTokens*inputRate+outputTokens*outputRate)/1_000_000)*1_000_000)/1_000_000}
