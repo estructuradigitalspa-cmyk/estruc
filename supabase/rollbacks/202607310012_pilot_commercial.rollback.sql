@@ -1,0 +1,1 @@
+drop table if exists public.webhook_diagnostics,public.pilot_checklist_items,public.organization_pilot_settings;
