@@ -1,10 +1,10 @@
-﻿/* eslint-disable @typescript-eslint/no-explicit-any -- injected fluent Supabase client */
+/* eslint-disable @typescript-eslint/no-explicit-any -- injected fluent Supabase client */
 import {buildAgentContext} from "@/domain/agents/context";
 import {createLlmProvider} from "@/domain/agents/provider-factory";
 import {assertUsageBudget,estimateLlmCost} from "@/domain/agents/budget";
 type Db={from:(table:string)=>any};
 export async function runServiceAgent(input:{db:Db;organizationId:string;agentId:string;message:string;serviceRequestId?:string;conversationId?:string;idempotencyKey:string}){
- const agent=await input.db.from("service_agents").select("*,service_agent_versions(*)").eq("organization_id",input.organizationId).eq("id",input.agentId).eq("active",true).maybeSingle();if(!agent.data)throw new Error("AGENT_NOT_ACTIVE");
+ const agent=await input.db.from("service_agents").select("*,service_agent_versions!service_agent_versions_agent_id_fkey(*)").eq("organization_id",input.organizationId).eq("id",input.agentId).eq("active",true).maybeSingle();if(!agent.data)throw new Error("AGENT_NOT_ACTIVE");
  const version=(agent.data.service_agent_versions as Array<Record<string,any>>).find(v=>v.id===agent.data.active_version_id);if(!version)throw new Error("ACTIVE_VERSION_MISSING");
  if(input.serviceRequestId){const handoff=await input.db.from("human_handoffs").select("id").eq("organization_id",input.organizationId).eq("service_request_id",input.serviceRequestId).in("status",["OPEN","CLAIMED"]).limit(1);if(handoff.data?.length)throw new Error("AI_PAUSED_BY_HANDOFF")}
  const existing=await input.db.from("agent_tool_calls").select("agent_run_id,output,status").eq("organization_id",input.organizationId).eq("idempotency_key",input.idempotencyKey).maybeSingle();if(existing.data?.status==="SUCCEEDED")return{idempotent:true,runId:existing.data.agent_run_id,result:existing.data.output};
