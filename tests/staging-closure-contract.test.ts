@@ -1,0 +1,7 @@
+import {describe,expect,it} from "vitest";import {readFileSync} from "node:fs";
+describe("staging closure contracts",()=>{
+ it("sanitizes historical agent tools and returns validation details",()=>{const ui=readFileSync("components/agent-editor.tsx","utf8"),api=readFileSync("app/api/agents/[id]/route.ts","utf8");expect(ui).toContain("supportedTools.includes(tool)");expect(api).toContain("p.error.flatten()");expect(api).toContain("active_version_id:version.id")});
+ it("normalizes every business day before rendering",()=>{const page=readFileSync("app/app/configuracion/operacion/page.tsx","utf8");expect(page).toContain("Object.entries(emptyBusinessHours)");expect(page).toContain("fallback")});
+ it("exposes guarded reject and expire quotation actions",()=>{const ui=readFileSync("components/quotation-actions.tsx","utf8"),api=readFileSync("app/api/quotations/[id]/route.ts","utf8");expect(ui).toContain('reject:"Rechazar"');expect(ui).toContain('expire:"Vencer"');expect(api).toContain('{status:"REJECTED"}');expect(api).toContain('{status:"EXPIRED"}')});
+ it("uses the transactional reschedule RPC and hides mutations from viewers",()=>{const api=readFileSync("app/api/appointments/route.ts","utf8"),page=readFileSync("app/app/agenda/page.tsx","utf8");expect(api).toContain('reschedule_service_appointment');expect(api).toContain('["owner","admin","agent"]');expect(page).toContain('membership.role!=="viewer"')});
+});
