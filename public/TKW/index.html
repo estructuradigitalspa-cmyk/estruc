@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <base href="/TKW/" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#071018" />
+  <meta name="description" content="Demo de plataforma integral para torneos de taekwondo." />
+  <title>TKD Live — Torneos que se viven en tiempo real</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="noise"></div>
+  <div class="rolebar"><span>EXPLORAR DEMO COMO</span><div><button class="active" data-role="deportista">Competidor</button><button data-role="profesor">Profesor / Escuela</button><button data-role="organizador">Organizador</button></div><small>Selecciona un perfil para ver sus herramientas</small></div>
+  <header class="topbar">
+    <a class="brand" href="#inicio" aria-label="TKD Live inicio">
+      <span class="brand-mark">T</span><span>TKD<span>LIVE</span></span>
+    </a>
+    <nav class="desktop-nav" aria-label="Navegación principal">
+      <a class="nav-link active" href="#inicio">Inicio</a>
+      <a class="nav-link" href="#eventos">Eventos</a>
+      <a class="nav-link" href="#operacion">En vivo</a>
+      <a class="nav-link" href="#ranking">Ranking</a>
+      <a class="nav-link" href="#tienda">Tienda</a>
+    </nav>
+    <div class="header-actions">
+      <button class="icon-button" id="themeButton" aria-label="Cambiar tema">☼</button>
+      <button class="profile-button" id="profileButton">
+        <span class="avatar tiny">SU</span><span class="profile-copy">Sebastián<br><small>Deportista</small></span><span>⌄</span>
+      </button>
+      <button class="menu-button" id="menuButton" aria-label="Abrir menú">☰</button>
+    </div>
+    <div class="profile-menu" id="profileMenu">
+      <button data-view="dashboard">Mi panel</button>
+      <button data-view="profesor">Vista profesor</button>
+      <button data-view="organizador">Vista organizador</button>
+      <button data-view="cancha">Operación cancha</button>
+      <button data-view="inicio">Cerrar menú</button>
+    </div>
+  </header>
+
+  <main id="app">
+    <section class="view active" id="inicio">
+      <div class="hero">
+        <div class="hero-grid"></div>
+        <div class="hero-glow glow-one"></div><div class="hero-glow glow-two"></div>
+        <div class="hero-content">
+          <div class="eyebrow"><span class="pulse"></span> Plataforma integral de competición</div>
+          <h1>Todo el torneo.<br><em>Un solo lugar.</em></h1>
+          <p>Inscripciones, pesaje, llaves y resultados en vivo. Una experiencia más simple para organizadores, academias y deportistas.</p>
+          <div class="hero-actions">
+            <button class="primary-button" data-view="eventos">Explorar eventos <span>→</span></button>
+            <button class="ghost-button" data-view="organizador"><span class="play">â–¶</span> Ver demo organizador</button>
+          </div>
+          <div class="hero-proof">
+            <div class="avatar-stack"><span>JM</span><span>AC</span><span>+2k</span></div>
+            <p><strong>2.418 deportistas</strong><br>ya compiten conectados</p>
+          </div>
+        </div>
+        <aside class="live-card glass-card">
+          <div class="live-card-head"><span class="live-pill"><i></i> EN VIVO</span><span>Cancha 02</span></div>
+          <p class="fight-category">JUVENIL DAN · -63 KG</p>
+          <div class="fighters">
+            <div class="fighter"><span class="flag">🇨🇱</span><strong>Martín<br>Araya</strong><small>Hwarang Chile</small></div>
+            <div class="score"><b>8</b><span>2° ROUND<br>00:42</span><b>6</b></div>
+            <div class="fighter right"><span class="flag">🇦🇷</span><strong>Tomás<br>Rossi</strong><small>Team Córdoba</small></div>
+          </div>
+          <div class="round-line"><span style="width: 66%"></span></div>
+          <div class="next-fight"><span>PRÓXIMO</span><strong>Valentina Soto <i>vs</i> Laura Méndez</strong><small>Cadete · -47 kg</small></div>
+        </aside>
+      </div>
+
+      <section class="metric-strip">
+        <div><strong data-count="18450">0</strong><span>Deportistas registrados</span></div>
+        <div><strong data-count="324">0</strong><span>Torneos gestionados</span></div>
+        <div><strong data-count="8">0</strong><span>Países conectados</span></div>
+        <div><strong>100%</strong><span>Resultados en vivo</span></div>
+      </section>
+
+      <section class="section-shell feature-section">
+        <div class="section-heading"><div><span class="kicker">UN ECOSISTEMA COMPLETO</span><h2>Menos planillas.<br>Más competencia.</h2></div><p>Desde la primera inscripción hasta el último punto del medallero, todos trabajan con la misma información.</p></div>
+        <div class="feature-grid">
+          <article class="feature-card featured"><span class="feature-number">01</span><div class="feature-icon">⌁</div><h3>Inscripciones inteligentes</h3><p>Categorías automáticas por edad, grado, sexo y peso. Pagos y comprobantes centralizados.</p><button data-view="organizador">Explorar módulo →</button></article>
+          <article class="feature-card"><span class="feature-number">02</span><div class="feature-icon">⌘</div><h3>Llaves en tiempo real</h3><p>Sorteo transparente, avance de ganadores y publicación inmediata para toda la comunidad.</p><button data-view="evento">Ver una llave →</button></article>
+          <article class="feature-card"><span class="feature-number">03</span><div class="feature-icon">◉</div><h3>Operación de cancha</h3><p>Llamados, presencia y resultados desde tablets, incluso con conectividad inestable.</p><button data-view="cancha">Abrir cancha →</button></article>
+          <article class="feature-card"><span class="feature-number">04</span><div class="feature-icon">♛</div><h3>Ranking e historial</h3><p>Medallas, puntos y evolución competitiva vinculados al perfil de cada deportista.</p><button data-view="ranking">Ver ranking →</button></article>
+        </div>
+      </section>
+
+      <section class="section-shell upcoming-section">
+        <div class="section-heading compact"><div><span class="kicker">PRÓXIMAMENTE</span><h2>La competencia no se detiene</h2></div><button class="text-button" data-view="eventos">Ver calendario completo →</button></div>
+        <div class="event-row">
+          <div class="date-block"><strong>15</strong><span>AGO<br>2026</span></div>
+          <div class="event-badge orange">GRAND PRIX</div>
+          <div class="event-info"><small>LOS ÁNGELES · CHILE</small><h3>11° Grand Prix Internacional</h3><p>Combate · Kyorugui · 680 cupos</p></div>
+          <div class="attendees"><div class="avatar-stack"><span>AA</span><span>CB</span><span>+43</span></div><small>43 siguiendo</small></div>
+          <button class="outline-button" data-view="evento">Ver evento</button>
+        </div>
+        <div class="event-row">
+          <div class="date-block"><strong>22</strong><span>AGO<br>2026</span></div>
+          <div class="event-badge blue">OPEN</div>
+          <div class="event-info"><small>SANTIAGO · CHILE</small><h3>Copa Metropolitana 2026</h3><p>Kyorugui · Poomsae · 250 cupos</p></div>
+          <div class="attendees"><div class="avatar-stack"><span>MS</span><span>VL</span><span>+28</span></div><small>28 siguiendo</small></div>
+          <button class="outline-button" data-view="evento">Ver evento</button>
+        </div>
+      </section>
+    </section>
+
+    <section class="view app-view" id="eventos">
+      <div class="page-head"><div><span class="kicker">CALENDARIO 2026</span><h1>Próximos eventos</h1><p>Encuentra tu próxima competencia y sigue todas sus novedades.</p></div><button class="primary-button" data-view="organizador">+ Publicar evento</button></div>
+      <div class="filter-bar"><label>Buscar<input id="eventSearch" placeholder="Nombre, ciudad o academia"></label><label>País<select id="countryFilter"><option value="all">Todos</option><option>Chile</option><option>Argentina</option></select></label><label>Modalidad<select><option>Todas</option><option>Kyorugui</option><option>Poomsae</option></select></label></div>
+      <div class="event-grid" id="eventGrid"></div>
+    </section>
+
+    <section class="view app-view" id="evento">
+      <button class="back-button" data-view="eventos">← Volver a eventos</button>
+      <div class="event-hero">
+        <div class="event-poster"><span>11°</span><strong>GRAND<br>PRIX</strong><small>INTERNACIONAL · 2026</small></div>
+        <div><span class="status-pill">INSCRIPCIONES ABIERTAS</span><h1>11° Grand Prix Internacional</h1><p>Organiza Asociación Tigres Blancos · Los Ángeles, Chile</p><div class="event-meta"><span>◷ 15 agosto 2026</span><span>⌖ Polideportivo Municipal</span><span>♟ 680 cupos</span></div><div class="hero-actions"><button class="primary-button" id="registerFighterButton">Inscribir peleador</button><button class="outline-button" id="followButton">☆ Seguir evento</button><button class="outline-button">Descargar bases</button></div></div>
+      </div>
+      <div class="event-tabs" role="tablist"><button class="active" data-tab="competencia">Competencia</button><button data-tab="informacion">Información</button><button data-tab="medallero">Medallero</button><button data-tab="pesaje">Pesaje</button></div>
+      <div class="tab-panel active" id="tab-competencia">
+        <div class="panel-title"><div><span class="live-pill"><i></i> EN VIVO</span><h2>Llave Juvenil Dan · Masculino -63 kg</h2></div><button class="outline-button" data-view="operacion">Abrir centro en vivo</button></div>
+        <div class="bracket">
+          <div class="bracket-column"><span>CUARTOS DE FINAL</span><div class="match done"><p><b>🇨🇱 M. Araya</b><strong>12</strong></p><p>🇨🇱 J. Pérez <strong>7</strong></p></div><div class="match"><p><b>🇦🇷 T. Rossi</b><strong>8</strong></p><p>🇨🇱 D. Silva <strong>6</strong></p></div><div class="match"><p>🇨🇱 N. Vera <strong>—</strong></p><p>🇵🇪 A. Cruz <strong>—</strong></p></div><div class="match"><p>🇨🇱 B. Soto <strong>—</strong></p><p>🇦🇷 L. Díaz <strong>—</strong></p></div></div>
+          <div class="bracket-column semi"><span>SEMIFINAL</span><div class="match active-match"><p><b>🇨🇱 M. Araya</b><strong>8</strong></p><p>🇦🇷 T. Rossi <strong>6</strong></p><small>CANCHA 02 · EN VIVO</small></div><div class="match"><p>Por definir <strong>—</strong></p><p>Por definir <strong>—</strong></p></div></div>
+          <div class="bracket-column final"><span>FINAL</span><div class="match"><p>Por definir <strong>—</strong></p><p>Por definir <strong>—</strong></p><small>PROGRAMADA · 17:40</small></div></div>
+        </div>
+      </div>
+      <div class="tab-panel" id="tab-informacion"><div class="two-column"><article class="content-card"><h2>Información del evento</h2><p>Una jornada internacional con competencia de Kyorugui para categorías infantiles, cadetes, juveniles, adultos y senior.</p><ul><li>Sistema electrónico KPNP para categorías DAN.</li><li>Pesaje oficial el viernes 14 de agosto.</li><li>Ingreso de delegaciones desde las 08:00.</li></ul></article><aside class="content-card"><h3>Ubicación</h3><div class="map-placeholder"><span>⌖</span><b>Los Ángeles</b><small>Región del Biobío</small></div></aside></div></div>
+      <div class="tab-panel" id="tab-medallero"><div class="podium"><div><span>2</span><b>Academia Hwarang</b><strong>4 🥇 · 3 🥈 · 2 🥉</strong></div><div class="winner"><span>1</span><b>Tigres Blancos</b><strong>6 🥇 · 4 🥈 · 5 🥉</strong></div><div><span>3</span><b>Team Córdoba</b><strong>3 🥇 · 5 🥈 · 4 🥉</strong></div></div></div>
+      <div class="tab-panel" id="tab-pesaje"><div class="empty-state"><span>⚖</span><h2>Pesaje oficial</h2><p>14 de agosto · 16:00 a 20:00 · Polideportivo Municipal</p><button class="primary-button">Consultar estado</button></div></div>
+    </section>
+
+    <section class="view app-view" id="dashboard">
+      <div class="dashboard-head"><div><span class="kicker">MI PERFIL</span><h1>Hola, Sebastián 👋</h1><p>Este es tu resumen competitivo.</p></div><button class="outline-button">Editar perfil</button></div>
+      <div class="stats-grid"><div class="stat-card"><span>EVENTOS</span><strong>12</strong><small>+3 esta temporada</small></div><div class="stat-card"><span>COMBATES</span><strong>31</strong><small>20 victorias</small></div><div class="stat-card"><span>MEDALLAS</span><strong>8</strong><small>3 oros</small></div><div class="stat-card accent"><span>RANKING NACIONAL</span><strong>#14</strong><small>↑ 6 posiciones</small></div></div>
+      <div class="dashboard-grid"><article class="content-card profile-summary"><div class="avatar large">SU</div><h2>Sebastián Urrea</h2><p>Deportista · Chile</p><div class="tag-list"><span>Adulto GUP</span><span>-68 kg</span><span>Masculino</span></div><hr><button class="primary-button full">Actualizar categoría</button></article><article class="content-card span-two"><div class="panel-title"><h2>Próxima competencia</h2><button class="text-button" data-view="evento">Ver evento →</button></div><div class="next-competition"><div class="date-block"><strong>15</strong><span>AGO<br>2026</span></div><div><small>LOS ÁNGELES · CHILE</small><h3>11° Grand Prix Internacional</h3><p>Adulto GUP · Masculino · -68 kg</p></div><span class="status-pill">INSCRITO</span></div><h3 class="subheading">Historial reciente</h3><div class="history-row"><span class="medal gold">1</span><div><b>Copa Acero 2026</b><small>Adulto GUP · -68 kg</small></div><strong>ORO</strong></div><div class="history-row"><span class="medal bronze">3</span><div><b>XXII Copa del Lago</b><small>Adulto GUP · -68 kg</small></div><strong>BRONCE</strong></div></article></div>
+    </section>
+
+    <section class="view app-view" id="profesor">
+      <div class="dashboard-head"><div><span class="kicker">PANEL DE ESCUELA</span><h1>Academia Hwarang Chile</h1><p>Profesor Carlos Morales · 38 competidores activos</p></div><div class="header-actions"><span class="status-pill">ESCUELA VERIFICADA</span><button class="primary-button" id="openSchoolRegistration">Inscribir escuela en torneo</button></div></div>
+      <div class="teacher-alert"><div><span class="live-pill"><i></i> COMPETENCIA EN VIVO</span><h2>Martín Araya está compitiendo ahora</h2><p>Grand Prix Internacional · Cancha 02 · Semifinal Juvenil Dan -63 kg</p></div><div class="teacher-score"><strong>8</strong><span>ROUND 2<br>00:42</span><strong>6</strong></div><button class="outline-button" data-view="cancha">Seguir combate</button></div>
+      <div class="stats-grid"><div class="stat-card"><span>COMPETIDORES</span><strong>38</strong><small>32 habilitados</small></div><div class="stat-card"><span>INSCRITOS GRAND PRIX</span><strong>24</strong><small>18 pagos confirmados</small></div><div class="stat-card"><span>EN COMPETENCIA</span><strong>3</strong><small>2 en espera</small></div><div class="stat-card accent"><span>MEDALLAS 2026</span><strong>31</strong><small>12 oros</small></div></div>
+      <div class="teacher-layout"><aside class="side-menu"><button class="active">⌂ Resumen</button><button>♟ Mis competidores <span>38</span></button><button>＋ Agregar deportista</button><button>▤ Inscripciones <span>24</span></button><button>⚖ Pesajes <span>3</span></button><button>▣ Documentos</button><button>＄ Pagos <span>6</span></button><button>♛ Resultados</button></aside><div class="organizer-main">
+        <article class="content-card"><div class="panel-title"><h2>Mis competidores en Grand Prix</h2><div><button class="text-button">Importar Excel</button><button class="primary-button" id="teacherRegisterFighter">+ Inscribir peleador</button></div></div><div class="competitor-table"><div class="table-head"><span>DEPORTISTA</span><span>CATEGORÍA</span><span>ESTADO</span><span>PRÓXIMO</span></div><div><p><span class="avatar tiny blue">MA</span><b>Martín Araya</b><small>16 años · 1° Dan</small></p><span>Juvenil Dan · -63 kg</span><span class="status-pill live-status">EN CANCHA 02</span><button class="small-button" data-view="cancha">Ver vivo</button></div><div><p><span class="avatar tiny purple">VS</span><b>Valentina Soto</b><small>15 años · 1° Dan</small></p><span>Cadete Dan · -47 kg</span><span class="status-pill warning">PESAJE PENDIENTE</span><small>Combate #149</small></div><div><p><span class="avatar tiny green">NV</span><b>Nicolás Vera</b><small>17 años · 2° Dan</small></p><span>Juvenil Dan · -68 kg</span><span class="status-pill">CONFIRMADO</span><small>Combate #150</small></div><div><p><span class="avatar tiny">CS</span><b>Camila Salas</b><small>14 años · 2° GUP</small></p><span>Cadete GUP · -44 kg</span><span class="status-pill">CONFIRMADO</span><small>15:45 estimado</small></div></div></article>
+        <div class="two-column"><article class="content-card"><div class="panel-title"><h2>Tareas pendientes</h2><span>4</span></div><div class="check-list"><p>○ Confirmar peso de 3 deportistas <small>Hoy</small></p><p>○ Cargar autorización de menores <small>2 faltantes</small></p><p>○ Revisar pago de delegación <small>$108.000</small></p><p class="done">✓ Nómina de coach aprobada <small>Listo</small></p></div></article><article class="content-card"><div class="panel-title"><h2>Resultados del equipo</h2><button class="text-button">Ver todos →</button></div><div class="team-medals"><div><strong>12</strong><span>🥇 ORO</span></div><div><strong>9</strong><span>🥈 PLATA</span></div><div><strong>10</strong><span>🥉 BRONCE</span></div></div><div class="mini-progress"><i style="width:78%"></i></div><p class="muted-copy">#2 en el ranking de escuelas 2026</p></article></div>
+      </div></div>
+    </section>    <section class="view app-view" id="organizador">
+      <div class="dashboard-head"><div><span class="kicker">CENTRO DE GESTIÓN</span><h1>Grand Prix Internacional</h1><p>15 agosto 2026 · Jornada única</p></div><div class="header-actions">
+      <span class="save-state">● Cambios guardados</span><button class="primary-button">Publicar cambios</button></div></div>
+      <div class="organizer-tabs"><button class="active" data-organizer-tab="mine">Mis competencias <span>3</span></button><button data-organizer-tab="all">Todas las competencias <span>24</span></button><button data-organizer-tab="schools">Escuelas por aprobar <span id="pendingSchoolCount">3</span></button></div>
+      <div class="organizer-tab-panel active" id="organizer-mine"><div class="managed-events"><article><div class="managed-event-mark red-event">15<small>AGO</small></div><div><span class="status-pill">PUBLICADO</span><h3>11° Grand Prix Internacional</h3><p>487 inscritos · 42 categorías · 4 canchas</p></div><div class="event-health"><small>PREPARACIÓN</small><strong>82%</strong><i><b style="width:82%"></b></i></div><button class="outline-button">Administrar</button></article><article><div class="managed-event-mark blue-event">22<small>AGO</small></div><div><span class="status-pill warning">BORRADOR</span><h3>Copa Metropolitana 2026</h3><p>Inscripciones aún no publicadas</p></div><div class="event-health"><small>PREPARACIÓN</small><strong>45%</strong><i><b style="width:45%"></b></i></div><button class="outline-button">Continuar edición</button></article><article><div class="managed-event-mark green-event">10<small>OCT</small></div><div><span class="status-pill">PROGRAMADO</span><h3>Open Santiago Centro</h3><p>Se publicará el 15 de agosto</p></div><div class="event-health"><small>PREPARACIÓN</small><strong>28%</strong><i><b style="width:28%"></b></i></div><button class="outline-button">Configurar</button></article></div></div>
+      <div class="organizer-tab-panel" id="organizer-all"><div class="panel-title"><div><h2>Directorio de competencias</h2><p class="muted-copy">Vista global de eventos públicos. Solo puedes administrar los creados por tu organización.</p></div><label class="field compact-search">Buscar evento<input placeholder="Nombre o ciudad"></label></div><div class="all-events-list"><div><span>15 AGO</span><p><b>Grand Prix Internacional</b><small>Los Ángeles · Tu competencia</small></p><span class="status-pill">ADMINISTRABLE</span><button class="outline-button">Abrir</button></div><div><span>22 AGO</span><p><b>Copa del Valle</b><small>Ovalle · Organización externa</small></p><span>412 inscritos</span><button class="outline-button" data-view="evento">Ver público</button></div><div><span>06 SEP</span><p><b>Open Internacional Formosa</b><small>Argentina · Organización externa</small></p><span>328 inscritos</span><button class="outline-button" data-view="evento">Ver público</button></div></div></div>
+      <div class="organizer-tab-panel" id="organizer-schools"><div class="panel-title"><div><h2>Escuelas solicitando ingreso</h2><p class="muted-copy">Al aprobar una escuela, su profesor podrá inscribir peleadores en esa competencia.</p></div><button class="primary-button" id="manualSchoolButton">+ Ingresar escuela manualmente</button></div><div class="school-requests"><article data-school-request><span class="avatar large blue">KD</span><div><small>GRAND PRIX INTERNACIONAL</small><h3>Koryo Dojang</h3><p>Profesor Ana Lagos · 18 competidores estimados · Santiago</p></div><span class="document-ok">✓ Documentos completos</span><div><button class="outline-button reject-school">Rechazar</button><button class="primary-button approve-school">Aprobar escuela</button></div></article><article data-school-request><span class="avatar large purple">CS</span><div><small>GRAND PRIX INTERNACIONAL</small><h3>Club Songahm</h3><p>Profesor Jaime Díaz · 11 competidores estimados · Temuco</p></div><span class="document-ok">✓ Documentos completos</span><div><button class="outline-button reject-school">Rechazar</button><button class="primary-button approve-school">Aprobar escuela</button></div></article><article data-school-request><span class="avatar large green">FT</span><div><small>COPA METROPOLITANA 2026</small><h3>Fuerza Taekwondo</h3><p>Profesora Laura Méndez · 26 competidores estimados · Maipú</p></div><span class="warning-text">! Falta certificado</span><div><button class="outline-button reject-school">Rechazar</button><button class="primary-button approve-school">Aprobar escuela</button></div></article></div></div>      <div class="organizer-layout">
+        <aside class="side-menu"><button class="active">⌂ Resumen</button><button>♟ Inscripciones <span>487</span></button><button>⌘ Categorías <span>42</span></button><button>⑂ Sorteo y llaves</button><button>⚖ Pesaje</button><button>▣ Canchas <span>4</span></button><button>♙ Árbitros <span>18</span></button><button>♛ Medallero</button><button>⚙ Configuración</button></aside>
+        <div class="organizer-main"><div class="stats-grid three"><div class="stat-card"><span>INSCRITOS</span><strong>487 <small>/ 680</small></strong><div class="mini-progress"><i style="width:72%"></i></div></div><div class="stat-card"><span>PAGOS CONFIRMADOS</span><strong>418</strong><small>69 pendientes</small></div><div class="stat-card accent"><span>PREPARACIÓN</span><strong>82%</strong><small>4 tareas pendientes</small></div></div>
+          <div class="two-column"><article class="content-card"><div class="panel-title"><h2>Estado de preparación</h2><span>6 de 8</span></div><div class="check-list"><p class="done">✓ Información y bases <small>Completado</small></p><p class="done">✓ Categorías configuradas <small>42 categorías</small></p><p class="done">✓ Canchas y horarios <small>4 canchas</small></p><p>○ Cerrar inscripciones <small>8 días restantes</small></p><p>○ Ejecutar sorteo <small>Disponible al cerrar</small></p></div></article><article class="content-card"><div class="panel-title"><h2>Inscripciones</h2><button class="text-button">Ver todas →</button></div><div class="chart-bars"><div><i style="height:42%"></i><span>L</span></div><div><i style="height:58%"></i><span>M</span></div><div><i style="height:65%"></i><span>M</span></div><div><i style="height:82%"></i><span>J</span></div><div><i style="height:76%"></i><span>V</span></div><div><i style="height:93%"></i><span>S</span></div><div><i style="height:60%"></i><span>D</span></div></div></article></div>
+          <article class="content-card"><div class="panel-title"><h2>Actividad reciente</h2><span class="live-pill"><i></i> ACTUALIZANDO</span></div><div class="activity-table"><div><span class="avatar tiny blue">HC</span><p><b>Hwarang Chile</b> inscribió 12 deportistas<small>Hace 4 minutos</small></p><strong>+$216.000</strong></div><div><span class="avatar tiny purple">TC</span><p><b>Team Córdoba</b> cargó comprobante de pago<small>Hace 18 minutos</small></p><span class="status-pill warning">REVISAR</span></div><div><span class="avatar tiny green">AN</span><p><b>Academia Nacional</b> modificó 3 categorías<small>Hace 32 minutos</small></p><strong>Actualizado</strong></div></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="view app-view dark-view" id="cancha">
+      <div class="court-top"><div><span class="live-pill"><i></i> EN OPERACIÓN</span><h1>Cancha 02</h1><p>Grand Prix Internacional · Jornada 1</p></div><div class="clock" id="clock">--:--:--</div></div>
+      <div class="court-grid"><section class="court-fight"><div class="fight-head"><span>COMBATE #148</span><strong>JUVENIL DAN · MASCULINO · -63 KG</strong><span>SEMIFINAL</span></div><div class="court-fighters"><div class="corner blue-corner"><span class="flag big">🇨🇱</span><small>AZUL</small><h2>Martín<br>Araya</h2><p>Hwarang Chile</p><strong>8</strong></div><div class="timer"><span>ROUND 2 DE 3</span><b id="fightTimer">00:42</b><button id="timerButton">▶ Continuar</button><small>PUNTUACIÓN MANUAL</small></div><div class="corner red-corner"><span class="flag big">🇦🇷</span><small>ROJO</small><h2>Tomás<br>Rossi</h2><p>Team Córdoba</p><strong>6</strong></div></div><div class="court-actions"><button class="danger-button">Finalizar combate</button><button class="outline-button">Registrar incidencia</button></div></section><aside class="queue"><div class="panel-title"><h2>Cola de llamados</h2><span>4 próximos</span></div><div class="queue-item active"><span>AHORA</span><b>#148 · Araya vs Rossi</b><small>Ambos confirmados</small></div><div class="queue-item"><span>PRÓXIMO</span><b>#149 · Soto vs Méndez</b><small class="missing">Falta confirmar: Méndez</small><button class="small-button">Llamar</button></div><div class="queue-item"><span>EN ESPERA</span><b>#150 · Vera vs Cruz</b><small>Programado 15:24</small></div><div class="queue-item"><span>EN ESPERA</span><b>#151 · Díaz vs López</b><small>Programado 15:31</small></div></aside></div>
+    </section>
+
+    <section class="view app-view" id="operacion"><div class="page-head"><div><span class="kicker">CENTRO EN VIVO</span><h1>Estado del campeonato</h1><p>Vista general de todas las áreas operativas.</p></div><span class="live-pill"><i></i> SINCRONIZADO</span></div><div class="live-overview"><div class="venue-map"><span class="court-node active">CANCHA 1<small>Combate #141</small></span><span class="court-node active">CANCHA 2<small>Combate #148</small></span><span class="court-node pause">CANCHA 3<small>Pausa técnica</small></span><span class="court-node active">CANCHA 4<small>Combate #156</small></span></div><div class="stats-grid"><div class="stat-card"><span>COMBATES COMPLETADOS</span><strong>147</strong></div><div class="stat-card"><span>EN CURSO</span><strong>3</strong></div><div class="stat-card"><span>PENDIENTES</span><strong>96</strong></div><div class="stat-card accent"><span>AVANCE</span><strong>60%</strong></div></div></div></section>
+
+    <section class="view app-view" id="ranking"><div class="page-head"><div><span class="kicker">TEMPORADA 2026</span><h1>Ranking nacional</h1><p>Resultados oficiales acumulados durante la temporada.</p></div></div><div class="filter-bar"><label>Categoría<select><option>Adulto GUP</option><option>Juvenil Dan</option><option>Cadete</option></select></label><label>Sexo<select><option>Masculino</option><option>Femenino</option></select></label><label>Peso<select><option>-68 kg</option><option>-63 kg</option><option>-74 kg</option></select></label></div><div class="ranking-table"><div class="ranking-head"><span>POS.</span><span>DEPORTISTA</span><span>EVENTOS</span><span>ORO</span><span>PUNTOS</span></div><div><strong>1</strong><p><span class="avatar tiny blue">MR</span><b>Matías Rojas</b><small>Academia Nacional</small></p><span>8</span><span>5</span><b>1.240</b></div><div><strong>2</strong><p><span class="avatar tiny purple">JV</span><b>Joaquín Vera</b><small>Hwarang Chile</small></p><span>9</span><span>4</span><b>1.180</b></div><div><strong>3</strong><p><span class="avatar tiny green">DL</span><b>Diego López</b><small>Tigres Blancos</small></p><span>7</span><span>4</span><b>1.090</b></div><div class="highlight"><strong>14</strong><p><span class="avatar tiny">SU</span><b>Sebastián Urrea</b><small>Tu posición</small></p><span>6</span><span>2</span><b>640</b></div></div></section>
+    <section class="view app-view" id="tienda">
+      <div class="shop-hero"><div><span class="kicker">TIENDA OFICIAL</span><h1>Equípate para competir.</h1><p>Compra online y recibe en tu domicilio o retira sin costo durante el campeonato.</p></div><button class="cart-button" id="cartButton">Bolsa <span id="cartCount">0</span></button></div>
+      <div class="shop-toolbar"><button class="active">Todos</button><button>Protecciones</button><button>Dobok</button><button>Accesorios</button><span>Productos oficiales y vendedores verificados</span></div>
+      <div class="product-grid" id="productGrid"></div>
+      <section class="pickup-promo"><div class="pickup-icon">⌖</div><div><span>RETIRO SIN COSTO</span><h2>Tu pedido te espera en el campeonato</h2><p>Selecciona un evento habilitado al pagar. Presenta el QR de tu compra en el stand oficial.</p></div><button class="outline-button" data-view="eventos">Ver próximos eventos</button></section>
+    </section>  </main>
+
+  <div class="modal-backdrop" id="manualSchoolModal"><section class="flow-modal"><div class="modal-head"><div><small>GESTIÓN DEL ORGANIZADOR</small><h2>Ingresar escuela a una competencia</h2></div><button class="modal-close" data-close="manualSchoolModal">×</button></div><div class="flow-step active school-step"><div class="form-grid"><label class="field">Competencia<select><option>11° Grand Prix Internacional</option><option>Copa Metropolitana 2026</option><option>Open Santiago Centro</option></select></label><label class="field">Buscar escuela<input value="Academia Dragón Rojo"></label><label class="field">Profesor responsable<input value="Marcelo Fuentes"></label><label class="field">Correo<input value="profesor@dragonrojo.cl"></label></div><div class="requirement-card"><b>Acceso que se otorgará</b><p>El profesor podrá administrar su delegación e inscribir peleadores únicamente en la competencia seleccionada.</p></div></div><div class="modal-actions"><button class="outline-button" data-close="manualSchoolModal">Cancelar</button><button class="primary-button" id="confirmManualSchool">Ingresar y notificar</button></div></section></div>  <div class="modal-backdrop" id="schoolRegistrationModal"><section class="flow-modal"><div class="modal-head"><div><small>REGISTRO DE DELEGACIÓN</small><h2>Inscribir escuela en campeonato</h2></div><button class="modal-close" data-close="schoolRegistrationModal">×</button></div><div class="flow-steps"><span class="active">1 Escuela</span><span>2 Representante</span><span>3 Documentos</span><span>4 Revisión</span></div><div class="flow-step active school-step"><div class="requirement-card"><b>¿Por qué es necesario?</b><p>El organizador debe aceptar primero a la escuela. Una vez aprobada, el profesor podrá inscribir a sus peleadores en este campeonato.</p></div><div class="form-grid"><label class="field">Nombre de la escuela<input value="Academia Hwarang Chile"></label><label class="field">RUT de la organización<input value="76.234.567-8"></label><label class="field">Ciudad<input value="Santiago"></label><label class="field">Asociación<select><option>Federación Nacional</option><option>Independiente</option></select></label></div><label class="check-row"><input type="checkbox" checked> Declaro estar autorizado para representar a esta escuela.</label></div><div class="modal-actions"><button class="outline-button" data-close="schoolRegistrationModal">Cancelar</button><button class="primary-button" id="submitSchoolRegistration">Enviar solicitud de registro</button></div></section></div>  <div class="modal-backdrop" id="registrationModal"><section class="flow-modal" role="dialog" aria-modal="true" aria-labelledby="registrationTitle">
+    <div class="modal-head"><div><small>11° GRAND PRIX INTERNACIONAL</small><h2 id="registrationTitle">Inscribir peleador</h2></div><button class="modal-close" data-close="registrationModal">×</button></div>
+    <div class="flow-steps"><span class="active">1 Escuela</span><span>2 Peleador</span><span>3 Categoría</span><span>4 Confirmación</span></div>
+    <div class="flow-step active" data-step="1"><div class="requirement-card"><b>Requisito para inscribir</b><p>La escuela debe estar registrada y aceptada previamente en este torneo. Solo un instructor o representante autorizado puede inscribir peleadores.</p></div><label class="field">Escuela registrada en el torneo<select id="schoolSelect"><option value="">Selecciona una escuela</option><option value="hwarang">Academia Hwarang Chile · Aprobada</option><option value="tigres">Tigres Blancos · Aprobada</option></select></label><p class="helper">¿Tu escuela no aparece? <button class="link-button" id="requestSchoolButton">Solicitar registro al organizador</button></p></div>
+    <div class="flow-step" data-step="2"><div class="verified-school">✓ Escuela habilitada: <b id="verifiedSchool">—</b></div><div class="form-grid"><label class="field">RUT o documento<input value="21.456.789-2"></label><label class="field">Nombre completo<input value="Valentina Soto Díaz"></label><label class="field">Fecha de nacimiento<input type="date" value="2011-04-18"></label><label class="field">Sexo<select><option>Femenino</option><option>Masculino</option></select></label><label class="field">Grado<select><option>1° Dan</option><option>1° GUP</option></select></label><label class="field">Peso actual (kg)<input type="number" value="46.8" step="0.1"></label></div></div>
+    <div class="flow-step" data-step="3"><div class="auto-category"><span>CATEGORÍA SUGERIDA AUTOMÁTICAMENTE</span><h3>Cadete Dan · Femenino · -47 kg</h3><p>Calculada según fecha de nacimiento, sexo, grado y peso informado.</p></div><div class="option-card"><span>🥋</span><div><b>Kyorugui individual</b><small>Cadete Dan · -47 kg</small></div><strong>$18.000</strong></div><label class="check-row"><input type="checkbox" checked> Confirmo que los datos y el peso son correctos.</label></div>
+    <div class="flow-step" data-step="4"><div class="success-illustration">✓</div><h2 class="center">Inscripción preparada</h2><p class="center muted-copy">Valentina Soto Díaz quedará inscrita por Academia Hwarang Chile en Cadete Dan Femenino -47 kg.</p><div class="summary-box"><p><span>Inscripción</span><b>$18.000</b></p><p><span>Estado inicial</span><b class="orange-text">Pendiente de pago</b></p></div><p class="demo-note">Demo: no se realizará un cobro real.</p></div>
+    <div class="modal-actions"><button class="outline-button" id="registrationBack">Atrás</button><button class="primary-button" id="registrationNext">Continuar</button></div>
+  </section></div>
+  <div class="drawer-backdrop" id="cartDrawer"><aside class="cart-drawer"><div class="modal-head"><div><small>TIENDA TKD LIVE</small><h2>Tu bolsa</h2></div><button class="modal-close" data-close="cartDrawer">×</button></div><div id="cartItems" class="cart-items"></div><div class="cart-empty" id="cartEmpty"><span>🛍</span><h3>Tu bolsa está vacía</h3><p>Agrega productos para continuar.</p></div><div class="cart-checkout" id="cartCheckout"><div class="delivery-choice"><label><input type="radio" name="delivery" value="pickup" checked><span><b>Retiro en campeonato</b><small>Gratis · Grand Prix, 15 AGO</small></span></label><label><input type="radio" name="delivery" value="shipping"><span><b>Envío a domicilio</b><small>2–4 días hábiles · $4.990</small></span></label></div><p><span>Subtotal</span><b id="cartSubtotal">$0</b></p><p><span>Entrega</span><b id="deliveryPrice">Gratis</b></p><p class="total"><span>Total</span><b id="cartTotal">$0</b></p><button class="primary-button full" id="checkoutButton">Ir a pagar</button><small class="secure-copy">🔒 Pago web seguro · demostración</small></div></aside></div>
+  <div class="modal-backdrop" id="paymentModal"><section class="flow-modal payment-modal"><div class="modal-head"><div><small>CHECKOUT SEGURO</small><h2>Finalizar compra</h2></div><button class="modal-close" data-close="paymentModal">×</button></div><div class="payment-layout"><div><label class="field">Correo<input value="sebastian@ejemplo.cl"></label><label class="field">Nombre en la tarjeta<input value="Sebastián Urrea"></label><label class="field">Número de tarjeta<input value="4242 4242 4242 4242"></label><div class="form-grid"><label class="field">Vencimiento<input value="12/28"></label><label class="field">CVV<input value="123"></label></div><p class="demo-note">Datos ficticios. Esta pantalla no procesa pagos reales.</p></div><aside class="order-summary"><span>RESUMEN</span><div id="paymentSummary"></div><p><b>Total</b><strong id="paymentTotal">$0</strong></p></aside></div><button class="primary-button full" id="payButton">Simular pago</button></section></div>  <div class="toast" id="toast"><span>✓</span><p><b>Listo</b><small>Acción completada correctamente.</small></p></div>
+  <script src="app.js?v=5"></script>
+</body>
+</html>
+
+
+
+
+
+
+
