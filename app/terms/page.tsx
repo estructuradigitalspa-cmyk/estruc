@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/page-hero";
 import { siteConfig } from "@/lib/site-config";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Términos y Condiciones", description: "Términos de uso de Estructura Digital.", alternates: { canonical: "/terminos" } };
+export const metadata: Metadata = pageMetadata({title:"Términos y Condiciones",description:"Condiciones aplicables al sitio, la plataforma, los servicios y las integraciones empresariales de Estructura Digital.",path:"/terminos"});
 
 export default function TermsPage() {
   return <><PageHero eyebrow="Información legal" title="Términos y Condiciones" description="Reglas aplicables al uso del sitio, la plataforma y sus integraciones empresariales."/>

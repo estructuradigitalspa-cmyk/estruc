@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Archivos generados por el runtime local de Supabase.
+    "supabase/.temp/**",
+    // Entregables gráficos generados fuera del código de la aplicación.
+    "output/**",
   ]),
 ]);
 

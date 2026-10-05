@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/page-hero";
 import { siteConfig } from "@/lib/site-config";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Política de Privacidad",
-  description: "Política de privacidad, tratamiento y eliminación de datos de Estructura Digital SPA.",
-  alternates: { canonical: "/privacidad" },
-};
+export const metadata: Metadata = pageMetadata({title:"Política de Privacidad",description:"Política de privacidad, tratamiento, protección y eliminación de datos de Estructura Digital SPA.",path:"/privacidad"});
 
 export default function PrivacyPage() {
   return <><PageHero eyebrow="Información legal" title="Política de Privacidad" description="Cómo recopilamos, utilizamos, compartimos, protegemos y eliminamos datos personales."/>
