@@ -1,4 +1,4 @@
-import type { Metadata } from "next"; import Script from "next/script"; import "./globals.css";
+import type { Metadata } from "next"; import "./globals.css";
 import { SiteChrome } from "@/components/site-chrome"; import { siteConfig } from "@/lib/site-config";
 
 export const metadata: Metadata = { metadataBase: new URL(siteConfig.url), title: { default: siteConfig.title, template: "%s | Estructura Digital" }, description: siteConfig.description, applicationName: siteConfig.name, alternates: { canonical: "/" }, openGraph: { type: "website", locale: "es_CL", url: siteConfig.url, siteName: siteConfig.name, title: siteConfig.title, description: siteConfig.description, images: [{ url: "/og.png", width: 1536, height: 1024, alt: "Estructura Digital: automatización, IA y CRM para empresas" }] }, twitter: { card: "summary_large_image", title: siteConfig.title, description: siteConfig.description, images: ["/og.png"] }, icons: { icon: [{url:"/branding/favicon.ico",sizes:"any"},{url:"/branding/favicon.png",type:"image/png",sizes:"512x512"}], apple:"/branding/app-icon-white.png" }, manifest: "/manifest.webmanifest" };
@@ -6,8 +6,8 @@ const schema = { "@context":"https://schema.org", "@graph":[
   { "@type":"Organization", "@id":`${siteConfig.url}/#organization`, name:siteConfig.name, legalName:siteConfig.legalName, url:siteConfig.url, logo:{"@type":"ImageObject",url:`${siteConfig.url}/branding/app-icon.png`}, email:siteConfig.email, telephone:siteConfig.phone, areaServed:{"@type":"Country",name:"Chile"}, address:{"@type":"PostalAddress",addressCountry:"CL"}, knowsAbout:["Diseño de páginas web","Desarrollo web","Desarrollo de software","Automatización de procesos","CRM","Integraciones API","Inteligencia artificial aplicada"] },
   { "@type":"WebSite", "@id":`${siteConfig.url}/#website`, url:siteConfig.url, name:siteConfig.name, inLanguage:"es-CL", publisher:{"@id":`${siteConfig.url}/#organization`} }
 ] };
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) { return <html lang="es"><body><SiteChrome>{children}</SiteChrome><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}}/><Script src="https://www.googletagmanager.com/gtag/js?id=AW-18496187427" strategy="afterInteractive"/><Script id="google-ads-tag" strategy="afterInteractive">{`window.dataLayer = window.dataLayer || [];
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) { return <html lang="es"><head><script async src="https://www.googletagmanager.com/gtag/js?id=AW-18496187427"/><script id="google-ads-tag" dangerouslySetInnerHTML={{__html:`window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 window.gtag = gtag;
 gtag('js', new Date());
-gtag('config', 'AW-18496187427');`}</Script></body></html>; }
+gtag('config', 'AW-18496187427');`}}/></head><body><SiteChrome>{children}</SiteChrome><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}}/></body></html>; }
