@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { ArrowRight, CheckCircle2, CircleDollarSign, Clock3, ShieldCheck } from "lucide-react";
 import { siteConfig } from "@/lib/site-config";
+import { TrackedWhatsAppLink } from "@/components/tracked-whatsapp-link";
 
 export type ServiceLandingProps = {
   eyebrow: string;
@@ -45,7 +45,7 @@ export function ServiceLanding(props: ServiceLandingProps) {
           <h1>{props.title}</h1>
           <p className="lead">{props.description}</p>
           <div className="button-row">
-            <Link className="button button-primary" href={`/contacto?servicio=${encodeURIComponent(props.serviceName)}`}>{props.cta}<ArrowRight size={18}/></Link>
+            <TrackedWhatsAppLink className="button button-primary" serviceName={props.serviceName}>Cotizar por WhatsApp<ArrowRight size={18}/></TrackedWhatsAppLink>
             <a className="button button-secondary" href={`tel:${siteConfig.phoneHref}`}>Llamar ahora</a>
           </div>
         </div>
@@ -83,7 +83,7 @@ export function ServiceLanding(props: ServiceLandingProps) {
       <div className="faq-list">{props.faqs.map((faq)=><details key={faq.question}><summary>{faq.question}</summary><p>{faq.answer}</p></details>)}</div>
     </div></section>
 
-    <section className="section"><div className="container cta"><div><p className="eyebrow">Siguiente paso</p><h2>Cuéntanos qué necesitas y te proponemos un alcance inicial.</h2></div><Link className="button button-light" href={`/contacto?servicio=${encodeURIComponent(props.serviceName)}`}>{props.cta}<ArrowRight size={18}/></Link></div></section>
+    <section className="section"><div className="container cta"><div><p className="eyebrow">Siguiente paso</p><h2>Cuéntanos qué necesitas y te proponemos un alcance inicial.</h2></div><TrackedWhatsAppLink className="button button-light" serviceName={props.serviceName}>Hablar con Sebastián<ArrowRight size={18}/></TrackedWhatsAppLink></div></section>
     <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}}/>
   </>;
 }
